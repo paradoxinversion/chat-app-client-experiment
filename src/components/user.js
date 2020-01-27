@@ -1,10 +1,19 @@
 import React from "react";
 
+/**
+ * A User, either in simple avator form at
+ * lower resolutins or with a name at higher
+ * ones.
+ * @param {*} props
+ */
 const User = props => (
+  // TODO: Make a tooltip or similar for the username at lower breakpoints
   <div
     key={props.user.id}
     className="inline-block p-1 hover:bg-blue-500 sm:block"
-  >
+    onClick={() => {
+      if (props.onUserClick) props.onUserClick(props.user);
+    }}>
     <img
       src={props.user.avatar}
       alt="user-mini"

@@ -1,7 +1,9 @@
 import React from "react";
+import ChatMessageList from "./chatMessageList";
 
 const PrivateChat = props => (
   <div className="flex flex-col h-full">
+    <button onClick={props.onPrivateChatExit}>Exit</button>
     <div className="flex items-center mb-8">
       <img
         src={props.user.avatar}
@@ -14,7 +16,7 @@ const PrivateChat = props => (
       </div>
     </div>
     <div className="border flex-grow p-4">
-      {/* TODO: Make some fake data  */}
+      <ChatMessageList messages={props.userChatMessages} />
     </div>
   </div>
 );

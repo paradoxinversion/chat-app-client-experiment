@@ -20,16 +20,15 @@ class ChatRoom extends React.Component {
       userSelected: null,
       privateChannel: ""
     };
-    this.handleChatInput = this.handleChatInput.bind(this);
+    this.chatTextAreaRef = React.createRef();
+    this.chatInputForm = React.createRef();
+    // this.handleChatInput = this.handleChatInput.bind(this);
     this.openPrivateChat = this.openPrivateChat.bind(this);
     this.closePrivateChat = this.closePrivateChat.bind(this);
   }
   componentDidMount() {
-    const socket = io("http://localhost:3001");
+    const socket = io(process.env.REACT_APP_SERVER_URL);
     this.setState({ socket });
-    socket.on("connect", () => {
-      console.log(socket.connected); // true
-    });
 
     socket.on("chat-message-broadcast", message => {
       const messages = this.state.chatMessages;
@@ -128,21 +127,25 @@ class ChatRoom extends React.Component {
             className="whitespace-no-wrap h-20 sm:border-l sm:h-auto sm:w-1/4 ">
             <div className="overflow-x-scroll sm:overflow-x-visible sm:h-full sm:flex sm:flex-col sm:overflow-y-scroll">
               {users.map(user => (
-                <User onUserClick={this.openPrivateChat} user={user} />
+                <User
+                  key={user.id}
+                  onUserClick={this.openPrivateChat}
+                  user={user}
+                />
               ))}
             </div>
           </div>
         </div>
         <div id="user-input">
           <div id="input-area" className="flex">
-            <textarea
+            {/* <textarea
               id="chatInput"
               name="chatInput"
               className="flex-grow resize-none border m-2"
               value={chatInput}
               onChange={this.handleChatInput}
               onKeyDown={e => {
-                if (e.keyCode == 13 && !e.shiftKey) {
+                if (e.keyCode === 13 && !e.shiftKey) {
                   if (!userSelected) {
                     socket.emit("chat-message-sent", { message: chatInput });
                   } else {
@@ -160,28 +163,59 @@ class ChatRoom extends React.Component {
                   });
                 }
               }}
-            />
-            <button
-              onClick={e => {
-                e.preventDefault();
-                if (!userSelected) {
-                  socket.emit("chat-message-sent", { message: chatInput });
-                } else {
-                  // evt, msg, user
-                  console.log("to", this.state.privateChannel);
-                  socket.emit("chat-message-sent", {
-                    message: chatInput,
-                    to: userSelected.id,
-                    from: this.state.me.id
-                  });
-                }
-                this.setState({
-                  chatInput: ""
-                });
-              }}
-              className="border p-2 m-2">
-              Send
-            </button>
+            /> */}
+            <form
+              ref={this.chatInputForm}
+              className="flex flex-grow border m-2">
+              <textarea
+                ref={this.chatTextAreaRef}
+                id="chatInput"
+                name="chatInput"
+                className="flex-grow resize-none"
+                onKeyDown={e => {
+                  if (e.keyCode === 13 && !e.shiftKey) {
+                    const messageText = this.chatTextAreaRef.current.value;
+                    if (!userSelected) {
+                      socket.emit("chat-message-sent", {
+                        message: messageText
+                      });
+                    } else {
+                      // evt, msg, user
+                      console.log("to", this.state.privateChannel);
+                      socket.emit("chat-message-sent", {
+                        message: this.chatTextAreaRef.current.value,
+                        to: userSelected.id,
+                        from: this.state.me.id
+                      });
+                    }
+                    this.chatTextAreaRef.current.value = "";
+                    this.chatInputForm.current.reset();
+                    this.forceUpdate();
+                  }
+                }}
+              />
+              <button
+                onClick={e => {
+                  e.preventDefault();
+                  if (!userSelected) {
+                    socket.emit("chat-message-sent", {
+                      message: this.chatTextAreaRef.current.value
+                    });
+                  } else {
+                    // evt, msg, user
+                    console.log("to", this.state.privateChannel);
+                    socket.emit("chat-message-sent", {
+                      message: this.chatTextAreaRef.current.value,
+                      to: userSelected.id,
+                      from: this.state.me.id
+                    });
+                  }
+                  this.chatTextAreaRef.current.value = "";
+                }}
+                className="border p-2 m-2">
+                Send
+              </button>
+            </form>
           </div>
         </div>
       </React.Fragment>

@@ -22,7 +22,7 @@ class ChatRoom extends React.Component {
     };
     this.chatTextAreaRef = React.createRef();
     this.chatInputForm = React.createRef();
-    // this.handleChatInput = this.handleChatInput.bind(this);
+    this.handleChatInput = this.handleChatInput.bind(this);
     this.openPrivateChat = this.openPrivateChat.bind(this);
     this.closePrivateChat = this.closePrivateChat.bind(this);
   }
@@ -48,6 +48,7 @@ class ChatRoom extends React.Component {
       this.setState({
         chatMessages: messages
       });
+      this.scrollToChatBottom();
     });
 
     socket.on("user-connected", ({ user }) => {
@@ -111,6 +112,10 @@ class ChatRoom extends React.Component {
   closePrivateChat() {
     this.setState({ userSelected: null, privateChannel: "" });
   }
+
+  scrollToChatBottom() {
+    document.getElementById("chat-bottom").scrollIntoView();
+  }
   render() {
     const { socket, chatMessages, users, chatInput, userSelected } = this.state;
     return (
@@ -131,7 +136,10 @@ class ChatRoom extends React.Component {
                 socket={socket}
               />
             ) : (
-              <ChatMessageList messages={chatMessages} />
+              <React.Fragment>
+                <ChatMessageList messages={chatMessages} />
+                <div id="chat-bottom" />
+              </React.Fragment>
             )}
           </div>
           <div
@@ -150,59 +158,37 @@ class ChatRoom extends React.Component {
         </div>
         <div id="user-input">
           <div id="input-area" className="flex">
-            {/* <textarea
-              id="chatInput"
-              name="chatInput"
-              className="flex-grow resize-none border m-2"
-              value={chatInput}
-              onChange={this.handleChatInput}
-              onKeyDown={e => {
-                if (e.keyCode === 13 && !e.shiftKey) {
-                  if (!userSelected) {
-                    socket.emit("chat-message-sent", { message: chatInput });
-                  } else {
-                    // evt, msg, user
-                    console.log("to", this.state.privateChannel);
-                    socket.emit("chat-message-sent", {
-                      message: chatInput,
-                      to: userSelected.id,
-                      from: this.state.me.id
-                    });
-                  }
-                  e.target.value = "";
-                  this.setState({
-                    chatInput: ""
-                  });
-                }
-              }}
-            /> */}
             <form
               ref={this.chatInputForm}
               className="flex flex-grow border m-2">
               <textarea
-                ref={this.chatTextAreaRef}
                 id="chatInput"
                 name="chatInput"
-                className="flex-grow resize-none"
+                className="flex-grow resize-none border m-2"
+                value={chatInput}
+                onChange={this.handleChatInput}
                 onKeyDown={e => {
                   if (e.keyCode === 13 && !e.shiftKey) {
-                    const messageText = this.chatTextAreaRef.current.value;
                     if (!userSelected) {
-                      socket.emit("chat-message-sent", {
-                        message: messageText
-                      });
+                      socket.emit("chat-message-sent", { message: chatInput });
                     } else {
                       // evt, msg, user
                       console.log("to", this.state.privateChannel);
                       socket.emit("chat-message-sent", {
-                        message: this.chatTextAreaRef.current.value,
+                        message: chatInput,
                         to: userSelected.id,
                         from: this.state.me.id
                       });
                     }
-                    this.chatTextAreaRef.current.value = "";
-                    this.chatInputForm.current.reset();
-                    this.forceUpdate();
+                    this.setState({
+                      chatInput: ""
+                    });
+                    e.target.value = "";
+                  }
+                }}
+                onKeyUp={e => {
+                  if (e.keyCode === 13 && !e.shiftKey) {
+                    e.target.value = "";
                   }
                 }}
               />
@@ -211,18 +197,20 @@ class ChatRoom extends React.Component {
                   e.preventDefault();
                   if (!userSelected) {
                     socket.emit("chat-message-sent", {
-                      message: this.chatTextAreaRef.current.value
+                      message: this.state.chatInput
                     });
                   } else {
                     // evt, msg, user
                     console.log("to", this.state.privateChannel);
                     socket.emit("chat-message-sent", {
-                      message: this.chatTextAreaRef.current.value,
+                      message: this.state.chatInput,
                       to: userSelected.id,
                       from: this.state.me.id
                     });
                   }
-                  this.chatTextAreaRef.current.value = "";
+                  this.setState({
+                    chatInput: ""
+                  });
                 }}
                 className="border p-2 m-2">
                 Send

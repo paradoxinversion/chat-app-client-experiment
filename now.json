@@ -1,0 +1,7 @@
+{
+  "build": {
+    "env": {
+      "REACT_APP_SERVER_URL_PROD": "https://www.paradoxinversion.com/chattr/"
+    }
+  }
+}

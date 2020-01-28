@@ -27,7 +27,11 @@ class ChatRoom extends React.Component {
     this.closePrivateChat = this.closePrivateChat.bind(this);
   }
   componentDidMount() {
-    const socket = io(process.env.REACT_APP_SERVER_URL);
+    const serverURL =
+      process.env.NODE_ENV === "development"
+        ? REACT_APP_SERVER_URL_DEV
+        : REACT_APP_SERVER_URL_PROD;
+    const socket = io(serverURL);
     this.setState({ socket });
 
     socket.on("chat-message-broadcast", message => {

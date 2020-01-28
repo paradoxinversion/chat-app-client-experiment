@@ -37,7 +37,7 @@ class ChatRoom extends React.Component {
         ? process.env.REACT_APP_SERVER_SOCKET_PATH
         : "/chattr";
     const socket = io(serverURL, {
-      // path: serverPath,
+      path: serverPath,
       transports: ["websocket"]
     });
     this.setState({ socket });

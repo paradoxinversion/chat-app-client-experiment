@@ -20,11 +20,13 @@ class ChatRoom extends React.Component {
       userSelected: null,
       privateChannel: "",
       scrollToNewMessages: true,
-      unacknowledgedPms: []
+      unacknowledgedPms: [],
+      showUserCP: false,
+      usernameChange: ""
     };
     this.chatTextAreaRef = React.createRef();
     this.chatInputForm = React.createRef();
-    this.handleChatInput = this.handleChatInput.bind(this);
+    this.handleInput = this.handleInput.bind(this);
     // this.openPrivateChat = this.openPrivateChat.bind(this);
     this.handleUserClick = this.handleUserClick.bind(this);
     this.closePrivateChat = this.closePrivateChat.bind(this);
@@ -45,7 +47,14 @@ class ChatRoom extends React.Component {
       transports: ["websocket"]
     });
     this.setState({ socket });
-
+    socket.on("set-username", username => {
+      console.log(username);
+      const me = this.state.me;
+      me.username = username.username;
+      this.setState({
+        me
+      });
+    });
     socket.on("chat-message-broadcast", message => {
       const messages = this.state.chatMessages;
       messages.push(message);
@@ -74,12 +83,7 @@ class ChatRoom extends React.Component {
       });
     });
 
-    socket.on("private-chat-initiated", data => {
-      console.log(data);
-    });
-
     socket.on("pm", data => {
-      console.log(data);
       // get the pm history w/ that user key
       // copy it, add as with normal messages
       // the to for sender, and from for reciever
@@ -102,7 +106,7 @@ class ChatRoom extends React.Component {
       if (data.from !== this.state.me.id) {
         if (
           !this.state.userSelected ||
-          (this.state.userSelected && !this.state.userSelected.id === data.from)
+          (this.state.userSelected && this.state.userSelected.id !== data.from)
         ) {
           const unacknowledgedPms = this.state.unacknowledgedPms;
           unacknowledgedPms.push(data.from);
@@ -118,19 +122,26 @@ class ChatRoom extends React.Component {
     });
   }
 
-  handleChatInput(e) {
+  handleInput(e) {
     this.setState({
       [e.target.name]: e.target.value
     });
   }
   handleUserClick(user) {
-    this.openPrivateChat(user);
-    const unacknowledgedPms = this.state.unacknowledgedPms.filter(
-      unacknowledgedUser => user.id !== unacknowledgedUser
-    );
-    this.setState({
-      unacknowledgedPms
-    });
+    if (user.id !== this.state.me.id) {
+      this.openPrivateChat(user);
+      const unacknowledgedPms = this.state.unacknowledgedPms.filter(
+        unacknowledgedUser => user.id !== unacknowledgedUser
+      );
+      this.setState({
+        unacknowledgedPms
+      });
+    } else {
+      if (this.state.privateChannel) {
+        this.closePrivateChat();
+      }
+      this.setState({ showUserCP: true });
+    }
   }
   openPrivateChat(user) {
     this.setState({ userSelected: user, privateChannel: user.id });
@@ -189,20 +200,60 @@ class ChatRoom extends React.Component {
             onScroll={this.setChatScrollState}
             id="chat-area"
             className="flex-grow sm:w-3/4 p-4 overflow-y-scroll">
-            {userSelected ? (
-              <PrivateChat
-                onPrivateChatExit={this.closePrivateChat}
-                user={userSelected}
-                userChatMessages={
-                  this.state.privateChatMessages[userSelected.id]
-                }
-                scrollCallback={this.setChatScrollState}
-                socket={socket}
-              />
+            {this.state.showUserCP ? (
+              <div className="flex flex-col h-full">
+                <header>
+                  <p>Control Panel</p>
+                  <button
+                    className="border mt-4 p-2 mb-4"
+                    onClick={() => {
+                      this.setState({ showUserCP: false });
+                    }}>
+                    Close Panel
+                  </button>
+                </header>
+                <div className="border bg-gray-100 rounded flex-grow">
+                  <form className="m-4 inline-block border p-4">
+                    <p className="text-center mb-2">Change Username</p>
+                    <input
+                      className="border"
+                      type="text"
+                      name="usernameChange"
+                      onChange={this.handleInput}
+                      value={this.state.usernameChange}
+                    />
+                    <button
+                      className="block border w-full mt-2"
+                      onClick={e => {
+                        e.preventDefault();
+                        socket.emit("set-username", {
+                          username: this.state.usernameChange
+                        });
+                        this.setState({ usernameChange: "" });
+                      }}>
+                      Change Username
+                    </button>
+                  </form>
+                </div>
+              </div>
             ) : (
               <React.Fragment>
-                <ChatMessageList messages={chatMessages} />
-                <div id="chat-bottom" />
+                {userSelected ? (
+                  <PrivateChat
+                    onPrivateChatExit={this.closePrivateChat}
+                    user={userSelected}
+                    userChatMessages={
+                      this.state.privateChatMessages[userSelected.id]
+                    }
+                    scrollCallback={this.setChatScrollState}
+                    socket={socket}
+                  />
+                ) : (
+                  <React.Fragment>
+                    <ChatMessageList messages={chatMessages} />
+                    <div id="chat-bottom" />
+                  </React.Fragment>
+                )}
               </React.Fragment>
             )}
           </div>
@@ -216,6 +267,7 @@ class ChatRoom extends React.Component {
                     key={user.id}
                     onUserClick={this.handleUserClick}
                     user={user}
+                    isClient={user.id === this.state.me.id}
                     pmNotice={this.state.unacknowledgedPms.includes(user.id)}
                   />
                 );
@@ -233,7 +285,7 @@ class ChatRoom extends React.Component {
                 name="chatInput"
                 className="flex-grow resize-none border m-2"
                 value={chatInput}
-                onChange={this.handleChatInput}
+                onChange={this.handleInput}
                 onKeyDown={e => {
                   if (e.keyCode === 13 && !e.shiftKey) {
                     this.sendMessage(e, socket, chatInput, userSelected);

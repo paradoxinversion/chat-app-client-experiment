@@ -12,7 +12,7 @@ const User = props => (
     key={props.user.id}
     className={`inline-block p-1 hover:bg-blue-500 sm:block${
       props.pmNotice ? " bg-red-500" : ""
-    }`}
+    }${props.isClient ? " bg-blue-200" : ""}`}
     onClick={() => {
       if (props.onUserClick) props.onUserClick(props.user);
     }}>

@@ -18,13 +18,15 @@ class ChatRoom extends React.Component {
       users: [],
       chatInput: "",
       userSelected: null,
-      privateChannel: ""
+      privateChannel: "",
+      scrollToNewMessages: true
     };
     this.chatTextAreaRef = React.createRef();
     this.chatInputForm = React.createRef();
     this.handleChatInput = this.handleChatInput.bind(this);
     this.openPrivateChat = this.openPrivateChat.bind(this);
     this.closePrivateChat = this.closePrivateChat.bind(this);
+    this.setChatScrollState = this.setChatScrollState.bind(this);
   }
   componentDidMount() {
     const serverURL =
@@ -48,7 +50,7 @@ class ChatRoom extends React.Component {
       this.setState({
         chatMessages: messages
       });
-      this.scrollToChatBottom();
+      if (this.state.scrollToNewMessages) this.scrollToChatBottom();
     });
 
     socket.on("user-connected", ({ user }) => {
@@ -96,6 +98,7 @@ class ChatRoom extends React.Component {
       this.setState({
         privateChatMessages: allPms
       });
+      if (this.state.scrollToNewMessages) this.scrollToPMBottom();
     });
   }
 
@@ -116,6 +119,20 @@ class ChatRoom extends React.Component {
   scrollToChatBottom() {
     document.getElementById("chat-bottom").scrollIntoView();
   }
+
+  scrollToPMBottom() {
+    document.getElementById("pm-bottom").scrollIntoView();
+  }
+
+  setChatScrollState(e) {
+    const chatScrolledToEnd =
+      e.target.scrollTop + e.target.clientHeight === e.target.scrollHeight;
+    if (chatScrolledToEnd) {
+      this.setState({ scrollToNewMessages: true });
+    } else {
+      this.setState({ scrollToNewMessages: false });
+    }
+  }
   render() {
     const { socket, chatMessages, users, chatInput, userSelected } = this.state;
     return (
@@ -124,6 +141,7 @@ class ChatRoom extends React.Component {
           id="chat-room"
           className="border flex flex-col flex-grow overflow-y-hidden sm:flex-row">
           <div
+            onScroll={this.setChatScrollState}
             id="chat-area"
             className="flex-grow sm:w-3/4 p-4 overflow-y-scroll">
             {userSelected ? (
@@ -133,6 +151,7 @@ class ChatRoom extends React.Component {
                 userChatMessages={
                   this.state.privateChatMessages[userSelected.id]
                 }
+                scrollCallback={this.setChatScrollState}
                 socket={socket}
               />
             ) : (

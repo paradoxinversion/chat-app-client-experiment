@@ -15,8 +15,9 @@ const PrivateChat = props => (
         <p className="text-2xl">{props.user.username}</p>
       </div>
     </div>
-    <div className="border flex-grow p-4">
+    <div onChange={props.setChatScrollState} className="border flex-grow p-4">
       <ChatMessageList messages={props.userChatMessages} />
+      <div id="pm-bottom" />
     </div>
   </div>
 );

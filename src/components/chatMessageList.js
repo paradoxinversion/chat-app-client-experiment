@@ -6,12 +6,14 @@ import Message from "./message";
  * messages in a chat, whether it's public or private.
  * @param {*} param0
  */
-const ChatMessageList = ({ messages }) => (
+const ChatMessageList = ({ messages, blocklist = [] }) => (
   <Fragment>
     {messages &&
-      messages.map(message => (
-        <Message key={`${message.id}-${message.time}`} message={message} />
-      ))}
+      messages
+        .filter(message => !blocklist.includes(message.from))
+        .map(message => (
+          <Message key={`${message.id}-${message.time}`} message={message} />
+        ))}
   </Fragment>
 );
 

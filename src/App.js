@@ -5,7 +5,7 @@ import "./styles.css";
 
 export default function App(props) {
   const [appState, setAppState] = useState({
-    loggedIn: true
+    loggedIn: false
   });
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -53,7 +53,9 @@ export default function App(props) {
                     },
                     { withCredentials: true }
                   );
-                  console.log(result);
+                  if (result.data.login === "success") {
+                    setAppState({ loggedIn: true });
+                  }
                 }}>
                 Log In
               </button>
@@ -73,7 +75,6 @@ export default function App(props) {
                     },
                     { withCredentials: true }
                   );
-                  console.log(result);
                 }}>
                 Sign Up
               </button>

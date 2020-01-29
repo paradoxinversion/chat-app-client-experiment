@@ -34,6 +34,10 @@ This project interacts with socketio via `socket.io-client`.
 
 `private-chat-initiated` (socket): Sends an event to initiate a private chat, which includes the socketid of the user to chat with
 
+## AuthN/AuthZ
+
+The chat is authorized via json webtokens secured on a cookie. _Needs work_.
+
 ## TODO
 
 - Blocking of PMs

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 /**
  * A User, either in simple avator form at
@@ -6,22 +6,47 @@ import React from "react";
  * ones.
  * @param {*} props
  */
-const User = props => (
-  // TODO: Make a tooltip or similar for the username at lower breakpoints
-  <div
-    key={props.user.id}
-    className={`inline-block p-1 hover:bg-blue-500 sm:block${
-      props.pmNotice ? " bg-red-500" : ""
-    }${props.isClient ? " bg-blue-200" : ""}`}
-    onClick={() => {
-      if (props.onUserClick) props.onUserClick(props.user);
-    }}>
-    <img
-      src={props.user.avatar}
-      alt="user-mini"
-      className="rounded w-16 sm:w-24 sm:ml-auto sm:mr-auto md:h-8 md:w-8 md:inline md:m-0 md:mr-2"
-    />
-    <span className="hidden md:inline text-sm">{props.user.username}</span>
-  </div>
-);
+const User = props => {
+  const [open, setOpenState] = useState(false);
+  return (
+    // TODO: Make a tooltip or similar for the username at lower breakpoints
+    <div
+      key={props.user.id}
+      className={`inline-block p-1 hover:bg-blue-500 sm:block${
+        props.pmNotice ? " bg-red-500" : ""
+      }${props.isClient ? " bg-blue-200" : ""}`}>
+      <div
+        onClick={() => {
+          setOpenState(!open);
+        }}>
+        <img
+          src={props.user.avatar}
+          alt="user-mini"
+          className="rounded w-16 sm:w-24 sm:ml-auto sm:mr-auto md:h-8 md:w-8 md:inline md:m-0 md:mr-2"
+        />
+        <span className="hidden md:inline text-sm">{props.user.username}</span>
+      </div>
+      {open && (
+        <div className="hidden sm:block">
+          <button
+            className="block bg-red-100 w-full"
+            onClick={e => {
+              if (props.initiatePrivateChatFn)
+                props.initiatePrivateChatFn(props.user);
+              setOpenState(false);
+            }}>
+            Private Chat
+          </button>
+          {/* <button
+            className="block bg-red-100 w-full"
+            onClick={e => {
+              if (props.blockUserFn) props.blockUserFn(props.user);
+            }}>
+            Block
+          </button> */}
+        </div>
+      )}
+    </div>
+  );
+};
 export default User;

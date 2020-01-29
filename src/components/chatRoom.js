@@ -22,13 +22,14 @@ class ChatRoom extends React.Component {
       scrollToNewMessages: true,
       unacknowledgedPms: [],
       showUserCP: false,
-      usernameChange: ""
+      usernameChange: "",
+      blocklist: []
     };
     this.chatTextAreaRef = React.createRef();
     this.chatInputForm = React.createRef();
     this.handleInput = this.handleInput.bind(this);
-    // this.openPrivateChat = this.openPrivateChat.bind(this);
-    this.handleUserClick = this.handleUserClick.bind(this);
+    this.initiatePrivateChat = this.initiatePrivateChat.bind(this);
+    this.blockUser = this.blockUser.bind(this);
     this.closePrivateChat = this.closePrivateChat.bind(this);
     this.setChatScrollState = this.setChatScrollState.bind(this);
   }
@@ -46,9 +47,8 @@ class ChatRoom extends React.Component {
       path: serverPath,
       transports: ["websocket"]
     });
-
+    this.setState({ socket });
     socket.on("set-username", username => {
-      console.log(username);
       const me = this.state.me;
       me.username = username.username;
       this.setState({
@@ -127,7 +127,7 @@ class ChatRoom extends React.Component {
       [e.target.name]: e.target.value
     });
   }
-  handleUserClick(user) {
+  initiatePrivateChat(user) {
     if (user.id !== this.state.me.id) {
       this.openPrivateChat(user);
       const unacknowledgedPms = this.state.unacknowledgedPms.filter(
@@ -174,7 +174,10 @@ class ChatRoom extends React.Component {
   sendMessage(e, socket, chatInput, user) {
     if (chatInput) {
       if (!user) {
-        socket.emit("chat-message-sent", { message: chatInput });
+        socket.emit("chat-message-sent", {
+          message: chatInput,
+          from: this.state.me.id
+        });
       } else {
         // evt, msg, user
         socket.emit("chat-message-sent", {
@@ -188,6 +191,12 @@ class ChatRoom extends React.Component {
       });
       e.target.value = "";
     }
+  }
+
+  blockUser(user) {
+    const blocklist = this.state.blocklist;
+    blocklist.push(user.id);
+    this.setState({ blocklist });
   }
   render() {
     const { socket, chatMessages, users, chatInput, userSelected } = this.state;
@@ -250,7 +259,10 @@ class ChatRoom extends React.Component {
                   />
                 ) : (
                   <React.Fragment>
-                    <ChatMessageList messages={chatMessages} />
+                    <ChatMessageList
+                      blocklist={this.state.blocklist}
+                      messages={chatMessages}
+                    />
                     <div id="chat-bottom" />
                   </React.Fragment>
                 )}
@@ -265,7 +277,9 @@ class ChatRoom extends React.Component {
                 return (
                   <User
                     key={user.id}
-                    onUserClick={this.handleUserClick}
+                    onUserClick={this.initiatePrivateChat}
+                    initiatePrivateChatFn={this.initiatePrivateChat}
+                    blockUserFn={this.blockUser}
                     user={user}
                     isClient={user.id === this.state.me.id}
                     pmNotice={this.state.unacknowledgedPms.includes(user.id)}

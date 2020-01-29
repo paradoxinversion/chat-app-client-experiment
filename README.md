@@ -33,3 +33,15 @@ This project interacts with socketio via `socket.io-client`.
 `chat-message-sent`: sends a chat message to the server-- whether it is private or public depends on whether ot not `to` is defined in the message object.
 
 `private-chat-initiated` (socket): Sends an event to initiate a private chat, which includes the socketid of the user to chat with
+
+## TODO
+
+- Blocking of PMs
+  - All Users
+  - Individual users
+- Filtering Messages in chat
+  - By User
+  - By text in message
+- Moderation
+  - Word filter
+  - Word

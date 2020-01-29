@@ -46,7 +46,7 @@ class ChatRoom extends React.Component {
       path: serverPath,
       transports: ["websocket"]
     });
-    this.setState({ socket });
+
     socket.on("set-username", username => {
       console.log(username);
       const me = this.state.me;

@@ -19,12 +19,14 @@ class ChatRoom extends React.Component {
       chatInput: "",
       userSelected: null,
       privateChannel: "",
-      scrollToNewMessages: true
+      scrollToNewMessages: true,
+      unacknowledgedPms: []
     };
     this.chatTextAreaRef = React.createRef();
     this.chatInputForm = React.createRef();
     this.handleChatInput = this.handleChatInput.bind(this);
-    this.openPrivateChat = this.openPrivateChat.bind(this);
+    // this.openPrivateChat = this.openPrivateChat.bind(this);
+    this.handleUserClick = this.handleUserClick.bind(this);
     this.closePrivateChat = this.closePrivateChat.bind(this);
     this.setChatScrollState = this.setChatScrollState.bind(this);
   }
@@ -77,6 +79,7 @@ class ChatRoom extends React.Component {
     });
 
     socket.on("pm", data => {
+      console.log(data);
       // get the pm history w/ that user key
       // copy it, add as with normal messages
       // the to for sender, and from for reciever
@@ -95,6 +98,19 @@ class ChatRoom extends React.Component {
         if (!userPmHistory) allPms[data.to] = [];
         allPms[data.to].push(data);
       }
+
+      if (data.from !== this.state.me.id) {
+        if (
+          !this.state.userSelected ||
+          (this.state.userSelected && !this.state.userSelected.id === data.from)
+        ) {
+          const unacknowledgedPms = this.state.unacknowledgedPms;
+          unacknowledgedPms.push(data.from);
+          this.setState({
+            unacknowledgedPms
+          });
+        }
+      }
       this.setState({
         privateChatMessages: allPms
       });
@@ -107,7 +123,15 @@ class ChatRoom extends React.Component {
       [e.target.name]: e.target.value
     });
   }
-
+  handleUserClick(user) {
+    this.openPrivateChat(user);
+    const unacknowledgedPms = this.state.unacknowledgedPms.filter(
+      unacknowledgedUser => user.id !== unacknowledgedUser
+    );
+    this.setState({
+      unacknowledgedPms
+    });
+  }
   openPrivateChat(user) {
     this.setState({ userSelected: user, privateChannel: user.id });
     this.state.socket.emit("private-chat-initiated", user.id);
@@ -117,11 +141,13 @@ class ChatRoom extends React.Component {
   }
 
   scrollToChatBottom() {
-    document.getElementById("chat-bottom").scrollIntoView();
+    const chatBottom = document.getElementById("chat-bottom");
+    chatBottom && chatBottom.scrollIntoView();
   }
 
   scrollToPMBottom() {
-    document.getElementById("pm-bottom").scrollIntoView();
+    const pmBottom = document.getElementById("pm-bottom");
+    pmBottom && pmBottom.scrollIntoView();
   }
 
   setChatScrollState(e) {
@@ -131,6 +157,25 @@ class ChatRoom extends React.Component {
       this.setState({ scrollToNewMessages: true });
     } else {
       this.setState({ scrollToNewMessages: false });
+    }
+  }
+
+  sendMessage(e, socket, chatInput, user) {
+    if (chatInput) {
+      if (!user) {
+        socket.emit("chat-message-sent", { message: chatInput });
+      } else {
+        // evt, msg, user
+        socket.emit("chat-message-sent", {
+          message: chatInput,
+          to: user.id,
+          from: this.state.me.id
+        });
+      }
+      this.setState({
+        chatInput: ""
+      });
+      e.target.value = "";
     }
   }
   render() {
@@ -165,13 +210,16 @@ class ChatRoom extends React.Component {
             id="user-area"
             className="whitespace-no-wrap h-20 sm:border-l sm:h-auto sm:w-1/4 ">
             <div className="overflow-x-scroll sm:overflow-x-visible sm:h-full sm:flex sm:flex-col sm:overflow-y-scroll">
-              {users.map(user => (
-                <User
-                  key={user.id}
-                  onUserClick={this.openPrivateChat}
-                  user={user}
-                />
-              ))}
+              {users.map(user => {
+                return (
+                  <User
+                    key={user.id}
+                    onUserClick={this.handleUserClick}
+                    user={user}
+                    pmNotice={this.state.unacknowledgedPms.includes(user.id)}
+                  />
+                );
+              })}
             </div>
           </div>
         </div>
@@ -188,21 +236,7 @@ class ChatRoom extends React.Component {
                 onChange={this.handleChatInput}
                 onKeyDown={e => {
                   if (e.keyCode === 13 && !e.shiftKey) {
-                    if (!userSelected) {
-                      socket.emit("chat-message-sent", { message: chatInput });
-                    } else {
-                      // evt, msg, user
-                      console.log("to", this.state.privateChannel);
-                      socket.emit("chat-message-sent", {
-                        message: chatInput,
-                        to: userSelected.id,
-                        from: this.state.me.id
-                      });
-                    }
-                    this.setState({
-                      chatInput: ""
-                    });
-                    e.target.value = "";
+                    this.sendMessage(e, socket, chatInput, userSelected);
                   }
                 }}
                 onKeyUp={e => {
@@ -214,22 +248,8 @@ class ChatRoom extends React.Component {
               <button
                 onClick={e => {
                   e.preventDefault();
-                  if (!userSelected) {
-                    socket.emit("chat-message-sent", {
-                      message: this.state.chatInput
-                    });
-                  } else {
-                    // evt, msg, user
-                    console.log("to", this.state.privateChannel);
-                    socket.emit("chat-message-sent", {
-                      message: this.state.chatInput,
-                      to: userSelected.id,
-                      from: this.state.me.id
-                    });
-                  }
-                  this.setState({
-                    chatInput: ""
-                  });
+
+                  this.sendMessage(e, socket, chatInput, userSelected);
                 }}
                 className="border p-2 m-2">
                 Send

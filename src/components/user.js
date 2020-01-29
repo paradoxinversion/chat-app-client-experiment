@@ -10,7 +10,9 @@ const User = props => (
   // TODO: Make a tooltip or similar for the username at lower breakpoints
   <div
     key={props.user.id}
-    className="inline-block p-1 hover:bg-blue-500 sm:block"
+    className={`inline-block p-1 hover:bg-blue-500 sm:block${
+      props.pmNotice ? " bg-red-500" : ""
+    }`}
     onClick={() => {
       if (props.onUserClick) props.onUserClick(props.user);
     }}>

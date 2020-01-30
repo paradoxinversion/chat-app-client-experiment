@@ -46,11 +46,7 @@ export default function App(props) {
                       ? process.env.REACT_APP_SERVER_URL_DEV
                       : process.env.REACT_APP_SERVER_URL_PROD;
                   const result = await axios.post(
-                    `${serverURL}${
-                      process.env.REACT_APP_AUTH_PATH
-                        ? process.env.REACT_APP_AUTH_PATH
-                        : ""
-                    }/sign-in`,
+                    `${serverURL}sign-in`,
                     {
                       username,
                       password
@@ -72,11 +68,7 @@ export default function App(props) {
                       ? process.env.REACT_APP_SERVER_URL_DEV
                       : process.env.REACT_APP_SERVER_URL_PROD;
                   const result = await axios.post(
-                    `${serverURL}${
-                      process.env.REACT_APP_AUTH_PATH
-                        ? process.env.REACT_APP_AUTH_PATH
-                        : ""
-                    }/sign-up`,
+                    `${serverUrl}sign-up`,
                     {
                       username,
                       password

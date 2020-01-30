@@ -314,7 +314,6 @@ class ChatRoom extends React.Component {
               <button
                 onClick={e => {
                   e.preventDefault();
-
                   this.sendMessage(e, socket, chatInput, userSelected);
                 }}
                 className="border p-2 m-2">

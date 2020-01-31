@@ -34,20 +34,8 @@ class ChatRoom extends React.Component {
     this.setChatScrollState = this.setChatScrollState.bind(this);
   }
   componentDidMount() {
-    const serverURL =
-      process.env.NODE_ENV === "development"
-        ? process.env.REACT_APP_SERVER_URL_DEV
-        : process.env.REACT_APP_SERVER_URL_PROD;
+    const serverURL = process.env.REACT_APP_SERVER_URL;
 
-    const serverPath =
-      process.env.NODE_ENV === "development"
-        ? process.env.REACT_APP_SERVER_SOCKET_PATH
-        : "/chattr-app";
-    // const socket = io(serverURL, {
-    //   path: serverPath,
-    //   transports: ["websocket"]
-    // });
-    // const socketUrl = `${serverURL}socket.io`;
     const socketUrl = `${serverURL}`;
     const socket = io(socketUrl, {
       transports: ["websocket"]

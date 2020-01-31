@@ -10,7 +10,7 @@ const ChatMessageList = ({ messages, blocklist = [] }) => (
   <Fragment>
     {messages &&
       messages
-        .filter(message => !blocklist.includes(message.from))
+        .filter(message => !blocklist.includes(message.fromUID))
         .map(message => (
           <Message key={`${message.id}-${message.time}`} message={message} />
         ))}

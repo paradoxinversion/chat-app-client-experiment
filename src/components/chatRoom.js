@@ -23,7 +23,8 @@ class ChatRoom extends React.Component {
       unacknowledgedPms: [],
       showUserCP: false,
       usernameChange: "",
-      blocklist: []
+      blocklist: [],
+      blockedBy: []
     };
     this.chatTextAreaRef = React.createRef();
     this.chatInputForm = React.createRef();
@@ -32,6 +33,7 @@ class ChatRoom extends React.Component {
     this.blockUser = this.blockUser.bind(this);
     this.closePrivateChat = this.closePrivateChat.bind(this);
     this.setChatScrollState = this.setChatScrollState.bind(this);
+    this.showUserCP = this.showUserCP.bind(this);
   }
   componentDidMount() {
     const serverURL = process.env.REACT_APP_SERVER_URL;
@@ -50,30 +52,66 @@ class ChatRoom extends React.Component {
     });
     socket.on("chat-message-broadcast", message => {
       const messages = this.state.chatMessages;
-      messages.push(message);
-      this.setState({
-        chatMessages: messages
-      });
-      if (this.state.scrollToNewMessages) this.scrollToChatBottom();
+      if (
+        !this.state.blocklist.includes(message.fromUID) &&
+        !this.state.blockedBy.includes(message.fromUID)
+      ) {
+        messages.push(message);
+        this.setState({
+          chatMessages: messages
+        });
+        if (this.state.scrollToNewMessages) this.scrollToChatBottom();
+      }
     });
 
     socket.on("user-connected", ({ user }) => {
       this.setState({
-        me: user
+        me: user,
+        blocklist: user.blockList || [],
+        blockedBy: user.blockedBy || []
       });
     });
+    socket.on("block-user", ({ blocklist, blockedBy }) => {
+      if (blocklist) {
+        this.setState({
+          blocklist
+        });
+      }
+      if (blockedBy) {
+        this.setState({
+          blockedBy
+        });
+      }
+    });
+    socket.on("unblock-user", ({ blocklist, blockedBy }) => {
+      if (blocklist) {
+        this.setState({
+          blocklist
+        });
+      }
 
+      if (blockedBy) {
+        this.setState({
+          blockedBy
+        });
+      }
+    });
     socket.on("room-user-change", data => {
-      const messages = this.state.chatMessages;
-      messages.push({
-        id: "system",
-        time: Date.now(),
-        message: data.message
-      });
-      this.setState({
-        chatMessages: messages,
-        users: data.users
-      });
+      if (
+        !this.state.blockedBy.includes(data.user.iid) &&
+        !this.state.blocklist.includes(data.user.iid)
+      ) {
+        const messages = this.state.chatMessages.slice();
+        messages.push({
+          id: "system",
+          time: Date.now(),
+          message: data.message
+        });
+        this.setState({
+          chatMessages: messages,
+          users: data.users
+        });
+      }
     });
 
     socket.on("pm", data => {
@@ -136,6 +174,12 @@ class ChatRoom extends React.Component {
       this.setState({ showUserCP: true });
     }
   }
+  showUserCP(show) {
+    if (this.state.privateChannel) {
+      this.closePrivateChat();
+    }
+    this.setState({ showUserCP: show });
+  }
   openPrivateChat(user) {
     this.setState({ userSelected: user, privateChannel: user.id });
     this.state.socket.emit("private-chat-initiated", user.id);
@@ -169,14 +213,17 @@ class ChatRoom extends React.Component {
       if (!user) {
         socket.emit("chat-message-sent", {
           message: chatInput,
-          from: this.state.me.id
+          from: this.state.me.id,
+          fromUID: this.state.me.iid
         });
       } else {
         // evt, msg, user
         socket.emit("chat-message-sent", {
           message: chatInput,
           to: user.id,
-          from: this.state.me.id
+          toUID: user.iid,
+          from: this.state.me.id,
+          fromUID: this.state.me.iid
         });
       }
       this.setState({
@@ -187,9 +234,10 @@ class ChatRoom extends React.Component {
   }
 
   blockUser(user) {
-    const blocklist = this.state.blocklist;
+    const blocklist = this.state.blocklist.slice();
     blocklist.push(user.id);
     this.setState({ blocklist });
+    this.state.socket.emit("block-user", user.id);
   }
   render() {
     const { socket, chatMessages, users, chatInput, userSelected } = this.state;
@@ -205,17 +253,17 @@ class ChatRoom extends React.Component {
             {this.state.showUserCP ? (
               <div className="flex flex-col h-full">
                 <header>
-                  <p>Control Panel</p>
+                  <p>User Control Panel</p>
                   <button
                     className="border mt-4 p-2 mb-4"
                     onClick={() => {
                       this.setState({ showUserCP: false });
                     }}>
-                    Close Panel
+                    Close
                   </button>
                 </header>
                 <div className="border bg-gray-100 rounded flex-grow">
-                  <form className="m-4 inline-block border p-4">
+                  {/* <form className="m-4 inline-block border p-4">
                     <p className="text-center mb-2">Change Username</p>
                     <input
                       className="border"
@@ -235,7 +283,34 @@ class ChatRoom extends React.Component {
                       }}>
                       Change Username
                     </button>
-                  </form>
+                  </form> */}
+                  <div className="m-4 border p-4">
+                    <p className="mb-4">Blocked Users</p>
+                    {this.state.blocklist.length > 0 ? (
+                      this.state.blocklist.map(blockedUserId => {
+                        const blockedUser = this.state.users.find(
+                          user => user.iid === blockedUserId
+                        );
+                        if (blockedUser) {
+                          return (
+                            <div>
+                              <span>{blockedUser.username}</span>{" "}
+                              <button
+                                className="inline bg-gray-200 p-2 border mt-2 ml-4"
+                                onClick={() => {
+                                  socket.emit("unblock-user", blockedUser.id);
+                                }}>
+                                Unblock
+                              </button>
+                            </div>
+                          );
+                        }
+                        return null;
+                      })
+                    ) : (
+                      <p>You haven't blocked any users.</p>
+                    )}
+                  </div>
                 </div>
               </div>
             ) : (
@@ -266,19 +341,26 @@ class ChatRoom extends React.Component {
             id="user-area"
             className="whitespace-no-wrap h-20 sm:border-l sm:h-auto sm:w-1/4 ">
             <div className="overflow-x-scroll sm:overflow-x-visible sm:h-full sm:flex sm:flex-col sm:overflow-y-scroll">
-              {users.map(user => {
-                return (
-                  <User
-                    key={user.id}
-                    onUserClick={this.initiatePrivateChat}
-                    initiatePrivateChatFn={this.initiatePrivateChat}
-                    blockUserFn={this.blockUser}
-                    user={user}
-                    isClient={user.id === this.state.me.id}
-                    pmNotice={this.state.unacknowledgedPms.includes(user.id)}
-                  />
-                );
-              })}
+              {users
+                .filter(
+                  user =>
+                    !this.state.blockedBy.includes(user.iid) &&
+                    !this.state.blocklist.includes(user.iid)
+                )
+                .map(user => {
+                  return (
+                    <User
+                      key={user.id}
+                      onUserClick={this.initiatePrivateChat}
+                      initiatePrivateChatFn={this.initiatePrivateChat}
+                      blockUserFn={this.blockUser}
+                      showUserCP={this.showUserCP}
+                      user={user}
+                      isClient={user.id === this.state.me.id}
+                      pmNotice={this.state.unacknowledgedPms.includes(user.id)}
+                    />
+                  );
+                })}
             </div>
           </div>
         </div>

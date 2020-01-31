@@ -41,10 +41,7 @@ export default function App(props) {
                 className="border"
                 onClick={async e => {
                   e.preventDefault();
-                  const serverURL =
-                    process.env.NODE_ENV === "development"
-                      ? process.env.REACT_APP_SERVER_URL_DEV
-                      : process.env.REACT_APP_SERVER_URL_PROD;
+                  const serverURL = process.env.REACT_APP_SERVER_URL;
                   const result = await axios.post(
                     `${serverURL}chattr/sign-in`,
                     {
@@ -63,12 +60,14 @@ export default function App(props) {
                 className="border"
                 onClick={async e => {
                   e.preventDefault();
-                  const serverURL =
-                    process.env.NODE_ENV === "development"
-                      ? process.env.REACT_APP_SERVER_URL_DEV
-                      : process.env.REACT_APP_SERVER_URL_PROD;
+                  const serverURL = process.env.REACT_APP_SERVER_URL;
+
                   const result = await axios.post(
-                    `${serverURL}chattr/sign-up`,
+                    `${serverURL}${
+                      process.env.NODE_ENV === "production"
+                        ? process.env.REACT_APP_APP_ENDPOINT
+                        : ""
+                    }/sign-up`,
                     {
                       username,
                       password

@@ -1,9 +1,9 @@
 {
   "build": {
     "env": {
-      "REACT_APP_SERVER_URL_PROD": "https://www.paradoxinversion.com/",
+      "REACT_APP_SERVER_URL": "https://www.paradoxinversion.com/",
       "REACT_APP_SERVER_SOCKET_PATH": "/chattr-app",
-      "REACT_APP_AUTH_PATH": "chattr"
+      "REACT_APP_APP_ENDPOINT": "chattr/"
     }
   }
 }

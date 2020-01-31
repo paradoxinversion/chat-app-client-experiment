@@ -38,7 +38,7 @@ export default function App(props) {
               <form className="bg-gray-100 flex flex-col max-w-md p-4 ml-auto mr-auto mt-4 border rounded">
                 <label htmlFor="username">Username</label>
                 <input
-                  className="border"
+                  className="border rounded"
                   name="username"
                   id="username"
                   type="text"
@@ -47,7 +47,7 @@ export default function App(props) {
                 />
                 <label htmlFor="password">Password</label>
                 <input
-                  className="border"
+                  className="border rounded"
                   name="password"
                   id="password"
                   type="password"
@@ -55,7 +55,7 @@ export default function App(props) {
                   onChange={e => setPassword(e.target.value)}
                 />
                 <button
-                  className="border bg-gray-200 mt-4"
+                  className="border rounded bg-gray-200 mt-4"
                   onClick={async e => {
                     e.preventDefault();
                     // debugger;
@@ -75,7 +75,7 @@ export default function App(props) {
                   Log In
                 </button>
                 <button
-                  className="border bg-gray-200 mt-4"
+                  className="border rounded bg-gray-200 mt-4"
                   onClick={async e => {
                     e.preventDefault();
                     const serverURL = process.env.REACT_APP_SERVER_URL;

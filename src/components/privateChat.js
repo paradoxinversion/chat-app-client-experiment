@@ -17,7 +17,7 @@ const PrivateChat = props => (
     <div onChange={props.setChatScrollState} className="border flex-grow p-4">
       <ChatMessageList messages={props.userChatMessages} />
       <div id="pm-bottom" />
-      <button className="border p-4" onClick={props.onPrivateChatExit}>
+      <button className="border rounded p-4" onClick={props.onPrivateChatExit}>
         Exit Private Chat
       </button>
     </div>

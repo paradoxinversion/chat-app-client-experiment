@@ -255,7 +255,7 @@ class ChatRoom extends React.Component {
                 <header>
                   <p>User Control Panel</p>
                   <button
-                    className="border mt-4 p-2 mb-4"
+                    className="border rounded mt-4 p-2 mb-4"
                     onClick={() => {
                       this.setState({ showUserCP: false });
                     }}>
@@ -296,7 +296,7 @@ class ChatRoom extends React.Component {
                             <div>
                               <span>{blockedUser.username}</span>{" "}
                               <button
-                                className="inline bg-gray-200 p-2 border mt-2 ml-4"
+                                className="inline rounded bg-gray-200 p-2 border mt-2 ml-4"
                                 onClick={() => {
                                   socket.emit("unblock-user", blockedUser.id);
                                 }}>
@@ -372,7 +372,7 @@ class ChatRoom extends React.Component {
               <textarea
                 id="chatInput"
                 name="chatInput"
-                className="flex-grow resize-none border m-2"
+                className="flex-grow resize-none border m-2 rounded"
                 value={chatInput}
                 onChange={this.handleInput}
                 onKeyDown={e => {
@@ -387,6 +387,7 @@ class ChatRoom extends React.Component {
                 }}
               />
               <button
+                className="rounded"
                 onClick={e => {
                   e.preventDefault();
                   this.sendMessage(e, socket, chatInput, userSelected);

@@ -35,6 +35,7 @@ class ChatRoom extends React.Component {
     this.setChatScrollState = this.setChatScrollState.bind(this);
     this.showUserCP = this.showUserCP.bind(this);
   }
+
   componentDidMount() {
     const serverURL = process.env.REACT_APP_SERVER_URL;
 
@@ -158,6 +159,11 @@ class ChatRoom extends React.Component {
       [e.target.name]: e.target.value
     });
   }
+
+  /**
+   * Opens a new PM channel with the specified user.
+   * @param {*} user
+   */
   initiatePrivateChat(user) {
     if (user.id !== this.state.me.id) {
       this.openPrivateChat(user);
@@ -174,30 +180,54 @@ class ChatRoom extends React.Component {
       this.setState({ showUserCP: true });
     }
   }
+
+  /**
+   * Show the user's control panel, closing private chat if necessary.
+   * @param {*} show
+   */
   showUserCP(show) {
     if (this.state.privateChannel) {
       this.closePrivateChat();
     }
     this.setState({ showUserCP: show });
   }
+  /**
+   * Open a new chat with the selected user.
+   * @param {*} user
+   */
   openPrivateChat(user) {
     this.setState({ userSelected: user, privateChannel: user.id });
     this.state.socket.emit("private-chat-initiated", user.id);
   }
+
+  /**
+   * Close private chat and unset the selected user/channel.
+   */
   closePrivateChat() {
     this.setState({ userSelected: null, privateChannel: "" });
   }
 
+  /**
+   * Scroll public chst to the end of chst history
+   */
   scrollToChatBottom() {
     const chatBottom = document.getElementById("chat-bottom");
     chatBottom && chatBottom.scrollIntoView();
   }
 
+  /***
+   * Scroll a Private chat to the end of chat history
+   */
   scrollToPMBottom() {
     const pmBottom = document.getElementById("pm-bottom");
     pmBottom && pmBottom.scrollIntoView();
   }
 
+  /***
+   * Determines whether the chat is scroll all the way to the bottom
+   * according to its current clientHeight/scrolltop. If scrolled
+   * to the end, will set state to scroll to new messages.
+   */
   setChatScrollState(e) {
     const chatScrolledToEnd =
       e.target.scrollTop + e.target.clientHeight === e.target.scrollHeight;
@@ -208,6 +238,11 @@ class ChatRoom extends React.Component {
     }
   }
 
+  /***
+   * Send a message (to chat or another specific user).
+   * Messages to specific users have the `toUID` & `to`
+   * properties. General chat messages do not.
+   */
   sendMessage(e, socket, chatInput, user) {
     if (chatInput) {
       if (!user) {
@@ -233,6 +268,9 @@ class ChatRoom extends React.Component {
     }
   }
 
+  /***
+   * Add a specified user to the current user's blocklist.
+   */
   blockUser(user) {
     const blocklist = this.state.blocklist.slice();
     blocklist.push(user.id);
@@ -319,6 +357,7 @@ class ChatRoom extends React.Component {
                   <PrivateChat
                     onPrivateChatExit={this.closePrivateChat}
                     user={userSelected}
+                    blockUser={this.blockUser}
                     userChatMessages={
                       this.state.privateChatMessages[userSelected.id]
                     }

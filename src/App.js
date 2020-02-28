@@ -21,6 +21,7 @@ export default function App(props) {
   useEffect(() => {
     checkStatus();
   }, []);
+
   return (
     <div className="App h-screen">
       <div id="chat-container" className="max-h-screen h-full flex flex-col">
@@ -58,7 +59,6 @@ export default function App(props) {
                   className="border rounded bg-gray-200 mt-4"
                   onClick={async e => {
                     e.preventDefault();
-                    // debugger;
                     const serverURL = process.env.REACT_APP_SERVER_URL;
                     const result = await axios.post(
                       `${serverURL}chattr/sign-in`,

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import moment from "moment";
-
+import PropTypes from "prop-types";
 /**
  * A Message is visual representation of data sent
  * from a user to the server. It is rendered in a
@@ -40,6 +40,20 @@ const Message = ({ message, clickFn }) => {
       )}
     </div>
   );
+};
+
+Message.propTypes = {
+  message: PropTypes.shape({
+    time: PropTypes.number,
+    id: PropTypes.string.isRequired,
+    message: PropTypes.string.isRequired,
+    fromUID: PropTypes.string,
+    user: PropTypes.shape({
+      username: PropTypes.string.isRequired,
+      avatar: PropTypes.string.isRequired
+    })
+  }),
+  clickFn: PropTypes.func.isRequired
 };
 
 export default Message;

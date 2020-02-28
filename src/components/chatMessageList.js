@@ -1,5 +1,6 @@
 import React, { Fragment } from "react";
 import Message from "./message";
+import PropTypes from "prop-types";
 
 /**
  * The ChatMessageList is responsible for displaying the
@@ -16,5 +17,21 @@ const ChatMessageList = ({ messages, blocklist = [] }) => (
         ))}
   </Fragment>
 );
+
+ChatMessageList.propTypes = {
+  blocklist: PropTypes.arrayOf(PropTypes.object),
+  messages: PropTypes.arrayOf(
+    PropTypes.shape({
+      time: PropTypes.number,
+      id: PropTypes.string.isRequired,
+      message: PropTypes.string.isRequired,
+      fromUID: PropTypes.string,
+      user: PropTypes.shape({
+        username: PropTypes.string.isRequired,
+        avatar: PropTypes.string.isRequired
+      })
+    })
+  )
+};
 
 export default ChatMessageList;

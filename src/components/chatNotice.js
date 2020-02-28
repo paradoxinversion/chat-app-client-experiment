@@ -1,5 +1,5 @@
 import React from "react";
-
+import PropTypes from "prop-types";
 /**
  * ChatNotices should appear at the top of a chat, or during
  * chat.
@@ -11,5 +11,10 @@ const ChatNotice = ({ heading, text }) => (
     <p>{text}</p>
   </div>
 );
+
+ChatNotice.proTypes = {
+  heading: PropTypes.string,
+  text: PropTypes.string.isRequired
+};
 
 export default ChatNotice;

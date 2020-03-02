@@ -8,13 +8,22 @@ import React, { useState } from "react";
  */
 const User = props => {
   const [open, setOpenState] = useState(false);
+  let userColor = "";
+  if (props.pmNotice) {
+    userColor = "bg-green-500";
+  } else {
+    if (props.isAdmin) {
+      userColor = "bg-red-200";
+    }
+    if (props.isClient) {
+      userColor = "bg-blue-200";
+    }
+  }
   return (
     // TODO: Make a tooltip or similar for the username at lower breakpoints
     <div
       key={props.user.id}
-      className={`inline-block p-1 hover:bg-blue-500 sm:block${
-        props.pmNotice ? " bg-red-500" : ""
-      }${props.isClient ? " bg-blue-200" : ""}`}>
+      className={`inline-block p-1 hover:bg-blue-500 sm:block ${userColor}`}>
       <div
         onClick={() => {
           setOpenState(!open);

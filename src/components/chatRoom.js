@@ -3,6 +3,7 @@ import User from "./user";
 import ChatMessageList from "./chatMessageList";
 import io from "socket.io-client";
 import PrivateChat from "./privateChat";
+import ControlPanel from "./controlPanel";
 
 /**
  * At ChatRoom represents a space where many users
@@ -34,6 +35,7 @@ class ChatRoom extends React.Component {
     this.closePrivateChat = this.closePrivateChat.bind(this);
     this.setChatScrollState = this.setChatScrollState.bind(this);
     this.showUserCP = this.showUserCP.bind(this);
+    this.banUser = this.banUser.bind(this);
   }
 
   componentDidMount() {
@@ -70,6 +72,19 @@ class ChatRoom extends React.Component {
         me: user,
         blocklist: user.blockList || [],
         blockedBy: user.blockedBy || []
+      });
+    });
+
+    socket.on("ban-user", ({ bannedUser }) => {
+      const messages = this.state.chatMessages.slice();
+      messages.push({
+        id: "system",
+        time: Date.now(),
+        message: `${bannedUser} has been banned from chat.`
+      });
+      this.setState({
+        chatMessages: messages
+        // users: data.users
       });
     });
     socket.on("block-user", ({ blocklist, blockedBy }) => {
@@ -277,6 +292,13 @@ class ChatRoom extends React.Component {
     this.setState({ blocklist });
     this.state.socket.emit("block-user", user.id);
   }
+
+  banUser(userId) {
+    debugger;
+    if (this.state.me.role === process.env.REACT_APP_ADMIN_USER_ROLE) {
+      this.state.socket.emit("ban-user", userId);
+    }
+  }
   render() {
     const { socket, chatMessages, users, chatInput, userSelected } = this.state;
     return (
@@ -289,68 +311,17 @@ class ChatRoom extends React.Component {
             id="chat-area"
             className="flex-grow sm:w-3/4 p-4 overflow-y-scroll">
             {this.state.showUserCP ? (
-              <div className="flex flex-col h-full">
-                <header>
-                  <p>User Control Panel</p>
-                  <button
-                    className="border rounded mt-4 p-2 mb-4"
-                    onClick={() => {
-                      this.setState({ showUserCP: false });
-                    }}>
-                    Close
-                  </button>
-                </header>
-                <div className="border bg-gray-100 rounded flex-grow">
-                  {/* <form className="m-4 inline-block border p-4">
-                    <p className="text-center mb-2">Change Username</p>
-                    <input
-                      className="border"
-                      type="text"
-                      name="usernameChange"
-                      onChange={this.handleInput}
-                      value={this.state.usernameChange}
-                    />
-                    <button
-                      className="block border w-full mt-2"
-                      onClick={e => {
-                        e.preventDefault();
-                        socket.emit("set-username", {
-                          username: this.state.usernameChange
-                        });
-                        this.setState({ usernameChange: "" });
-                      }}>
-                      Change Username
-                    </button>
-                  </form> */}
-                  <div className="m-4 border p-4">
-                    <p className="mb-4">Blocked Users</p>
-                    {this.state.blocklist.length > 0 ? (
-                      this.state.blocklist.map(blockedUserId => {
-                        const blockedUser = this.state.users.find(
-                          user => user.iid === blockedUserId
-                        );
-                        if (blockedUser) {
-                          return (
-                            <div>
-                              <span>{blockedUser.username}</span>{" "}
-                              <button
-                                className="inline rounded bg-gray-200 p-2 border mt-2 ml-4"
-                                onClick={() => {
-                                  socket.emit("unblock-user", blockedUser.id);
-                                }}>
-                                Unblock
-                              </button>
-                            </div>
-                          );
-                        }
-                        return null;
-                      })
-                    ) : (
-                      <p>You haven't blocked any users.</p>
-                    )}
-                  </div>
-                </div>
-              </div>
+              <ControlPanel
+                blocklist={this.state.blocklist}
+                users={this.state.users}
+                socket={this.state.socket}
+                showUserCP={this.showUserCP}
+                banUserFn={this.banUser}
+                isAdmin={
+                  this.state.me.role === process.env.REACT_APP_ADMIN_USER_ROLE
+                }
+                clientUser={this.state.me}
+              />
             ) : (
               <React.Fragment>
                 {userSelected ? (
@@ -396,6 +367,9 @@ class ChatRoom extends React.Component {
                       showUserCP={this.showUserCP}
                       user={user}
                       isClient={user.id === this.state.me.id}
+                      isAdmin={
+                        user.role === process.env.REACT_APP_ADMIN_USER_ROLE
+                      }
                       pmNotice={this.state.unacknowledgedPms.includes(user.id)}
                     />
                   );

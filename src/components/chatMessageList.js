@@ -28,7 +28,7 @@ ChatMessageList.propTypes = {
       fromUID: PropTypes.string,
       user: PropTypes.shape({
         username: PropTypes.string.isRequired,
-        avatar: PropTypes.string.isRequired
+        avatar: PropTypes.object.isRequired
       })
     })
   )

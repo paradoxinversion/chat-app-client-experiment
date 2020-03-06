@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { renderPNGFromArrayBuffer } from "../utils";
 
 /**
  * A User, either in simple avator form at
@@ -19,6 +20,7 @@ const User = props => {
       userColor = "bg-blue-200";
     }
   }
+
   return (
     // TODO: Make a tooltip or similar for the username at lower breakpoints
     <div
@@ -29,7 +31,7 @@ const User = props => {
           setOpenState(!open);
         }}>
         <img
-          src={props.user.avatar}
+          src={renderPNGFromArrayBuffer(props.user.avatar)}
           alt="user-mini"
           className="rounded w-16 sm:hidden"
           onClick={() => {
@@ -41,7 +43,7 @@ const User = props => {
           }}
         />
         <img
-          src={props.user.avatar}
+          src={renderPNGFromArrayBuffer(props.user.avatar)}
           alt="user-mini"
           className="hidden rounded w-16 sm:block sm:w-24 sm:ml-auto sm:mr-auto md:h-8 md:w-8 md:inline md:m-0 md:mr-2"
         />

@@ -1,12 +1,13 @@
 import React from "react";
 import ChatMessageList from "./chatMessageList";
 import PropTypes from "prop-types";
+import { renderPNGFromArrayBuffer } from "../utils";
 
 const PrivateChat = props => (
   <div className="flex flex-col h-full">
     <div className="flex items-center mb-8">
       <img
-        src={props.user.avatar}
+        src={renderPNGFromArrayBuffer(props.user.avatar)}
         alt={props.user.username}
         className="border-2 mr-4 inline-block rounded-full w-16 h-16"
       />
@@ -46,7 +47,7 @@ PrivateChat.propTypes = {
       fromUID: PropTypes.string,
       user: PropTypes.shape({
         username: PropTypes.string.isRequired,
-        avatar: PropTypes.string.isRequired
+        avatar: PropTypes.object.isRequired
       })
     })
   ),

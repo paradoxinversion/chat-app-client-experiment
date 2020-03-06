@@ -31,3 +31,9 @@ export const generateAppData = (totalUsers = 20, totalMessages = 150) => {
   }
   return { messages, users };
 };
+
+export const renderPNGFromArrayBuffer = arrayBuffer => {
+  const avatarBlob = new Blob([arrayBuffer]);
+  const urlCreator = window.URL || window.webkitURL;
+  return urlCreator.createObjectURL(avatarBlob);
+};

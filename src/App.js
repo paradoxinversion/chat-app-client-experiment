@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import ChatRoom from "./components/chatRoom";
 import axios from "axios";
-import "./styles.css";
-//
+import "./styles/tailwind.css";
+
 export default function App(props) {
   const [appState, setAppState] = useState({
     loggedIn: false

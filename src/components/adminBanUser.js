@@ -17,6 +17,11 @@ class AdminBanUser extends React.Component {
       this.setState({ bannedUsers: users });
     });
   }
+
+  componentWillUnmount() {
+    this.props.socket.off("get-banned-users");
+    console.log("socket off?");
+  }
   render() {
     return (
       <div>

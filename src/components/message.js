@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import moment from "moment";
 import PropTypes from "prop-types";
+import { renderPNGFromArrayBuffer } from "../utils";
 /**
  * A Message is visual representation of data sent
  * from a user to the server. It is rendered in a
@@ -21,7 +22,7 @@ const Message = ({ message, clickFn }) => {
         <React.Fragment>
           <img
             className="rounded-full mr-4 h-16"
-            src={message.user.avatar}
+            src={renderPNGFromArrayBuffer(message.user.avatar)}
             alt="the-user"
             onClick={e => {
               if (clickFn) clickFn(e);
@@ -50,10 +51,10 @@ Message.propTypes = {
     fromUID: PropTypes.string,
     user: PropTypes.shape({
       username: PropTypes.string.isRequired,
-      avatar: PropTypes.string.isRequired
+      avatar: PropTypes.object.isRequired
     })
   }),
-  clickFn: PropTypes.func.isRequired
+  clickFn: PropTypes.func
 };
 
 export default Message;

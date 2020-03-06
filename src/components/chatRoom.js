@@ -25,7 +25,8 @@ class ChatRoom extends React.Component {
       showUserCP: false,
       usernameChange: "",
       blocklist: [],
-      blockedBy: []
+      blockedBy: [],
+      me: null
     };
     this.chatTextAreaRef = React.createRef();
     this.chatInputForm = React.createRef();
@@ -112,6 +113,7 @@ class ChatRoom extends React.Component {
         });
       }
     });
+
     socket.on("room-user-change", data => {
       if (
         !this.state.blockedBy.includes(data.user.iid) &&

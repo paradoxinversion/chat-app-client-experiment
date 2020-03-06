@@ -16,6 +16,8 @@ export default function App(props) {
     );
     if (res.data.login === "success") {
       setAppState({ loggedIn: true });
+      setUsername("");
+      setPassword("");
     }
   }
   useEffect(() => {

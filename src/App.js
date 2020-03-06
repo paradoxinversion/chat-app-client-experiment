@@ -28,8 +28,21 @@ export default function App(props) {
     <div className="App h-screen">
       <div id="chat-container" className="max-h-screen h-full flex flex-col">
         <h1 className="m-4 font-bold text-xl ml-auto mr-auto">chattr</h1>
+
         {appState.loggedIn ? (
-          <ChatRoom />
+          <React.Fragment>
+            <button
+              onClick={async () => {
+                const logoutResult = await axios.get(
+                  `${process.env.REACT_APP_SERVER_URL}chattr/logout`,
+                  { withCredentials: true }
+                );
+                document.location.reload();
+              }}>
+              Logout
+            </button>
+            <ChatRoom />
+          </React.Fragment>
         ) : (
           <div className="border-t">
             <div className="m-4">

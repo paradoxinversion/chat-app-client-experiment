@@ -22,14 +22,18 @@ const ControlPanel = ({
         </button>
       </header>
       {isAdmin && (
-        <div id="cp-admin-controls">
-          <p>Admin Controls</p>
-          <AdminBanUser
-            clientUser={clientUser}
-            users={users}
-            banUserFn={banUserFn}
-            socket={socket}
-          />
+        <div
+          id="cp-admin-controls "
+          className="border bg-gray-100 rounded mb-4">
+          <p className="ml-4">Admin Controls</p>
+          <div className="border m-4 p-4">
+            <AdminBanUser
+              clientUser={clientUser}
+              users={users}
+              banUserFn={banUserFn}
+              socket={socket}
+            />
+          </div>
         </div>
       )}
       <div

@@ -27,11 +27,12 @@ export default function App(props) {
   return (
     <div className="App h-screen">
       <div id="chat-container" className="max-h-screen h-full flex flex-col">
-        <h1 className="m-4 font-bold text-xl ml-auto mr-auto">chattr</h1>
+        <h1 className="m-4 mb-0 font-bold text-xl ml-auto mr-auto">chattr</h1>
 
         {appState.loggedIn ? (
           <React.Fragment>
-            <button
+            {/* <div
+              className="btn w-40 self-end mb-2 content-center flex"
               onClick={async () => {
                 const logoutResult = await axios.get(
                   `${process.env.REACT_APP_SERVER_URL}chattr/logout`,
@@ -39,7 +40,29 @@ export default function App(props) {
                 );
                 document.location.reload();
               }}>
-              Logout
+              <span>Logout</span>
+              <svg
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                className="w-8 h-8 inline">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+              </svg>
+            </div> */}
+            <button
+              className="btn w-40 self-end mb-2 justify-center flex py-2"
+              onClick={async () => {
+                const logoutResult = await axios.get(
+                  `${process.env.REACT_APP_SERVER_URL}chattr/logout`,
+                  { withCredentials: true }
+                );
+                document.location.reload();
+              }}>
+              Log Out
             </button>
             <ChatRoom />
           </React.Fragment>
@@ -90,7 +113,7 @@ export default function App(props) {
                   Log In
                 </button>
                 <button
-                  className="border rounded bg-gray-200 mt-4"
+                  className="btn"
                   onClick={async e => {
                     e.preventDefault();
                     const serverURL = process.env.REACT_APP_SERVER_URL;

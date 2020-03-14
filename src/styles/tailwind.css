@@ -615,6 +615,13 @@ video {
   }
 }
 
+.btn {
+  border-width: 1px;
+  border-radius: 0.25rem;
+  background-color: #edf2f7;
+  margin-top: 1rem;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

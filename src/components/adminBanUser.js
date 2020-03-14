@@ -27,6 +27,7 @@ class AdminBanUser extends React.Component {
       <div>
         <form id="admin-ban-user-list">
           <select
+            className="border rounded appearance-none p-1"
             onChange={e => {
               this.setState({ selectedUser: e.target.value });
             }}>
@@ -38,6 +39,7 @@ class AdminBanUser extends React.Component {
               ))}
           </select>
           <button
+            className="inline rounded bg-gray-200 p-2 border mt-2 ml-4"
             onClick={e => {
               e.preventDefault();
               this.props.banUserFn(this.state.selectedUser);
@@ -47,6 +49,7 @@ class AdminBanUser extends React.Component {
         </form>
         <form id="admin-unban-user-list">
           <select
+            className="border rounded appearance-none p-1"
             onChange={e => {
               debugger;
               this.setState({ selectedUser: e.target.value });
@@ -59,6 +62,7 @@ class AdminBanUser extends React.Component {
               ))}
           </select>
           <button
+            className="inline rounded bg-gray-200 p-2 border mt-2 ml-4"
             onClick={e => {
               e.preventDefault();
               this.props.socket.emit("change-user-account-status", {

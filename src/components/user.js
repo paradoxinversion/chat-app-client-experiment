@@ -53,7 +53,8 @@ const User = props => {
         <div className="hidden sm:block">
           {props.isClient ? (
             <button
-              className="block rounded border mt-2 bg-gray-100 w-full"
+              // className="block rounded border mt-2 w-full"
+              className="btn block mt-2 w-full"
               onClick={e => {
                 if (props.showUserCP) props.showUserCP(true);
                 setOpenState(false);
@@ -62,7 +63,7 @@ const User = props => {
             </button>
           ) : (
             <button
-              className="block rounded border mt-2 bg-gray-100 w-full"
+              className="btn block mt-2 w-full"
               onClick={e => {
                 if (props.onUserClick) props.onUserClick(props.user);
                 setOpenState(false);
@@ -73,7 +74,7 @@ const User = props => {
 
           {!props.isClient && (
             <button
-              className="block rounded border mt-2 bg-gray-100 w-full"
+              className="btn block mt-2 w-full"
               onClick={e => {
                 if (props.blockUserFn) props.blockUserFn(props.user);
               }}>

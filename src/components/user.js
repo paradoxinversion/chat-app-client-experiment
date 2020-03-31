@@ -31,7 +31,11 @@ const User = props => {
           setOpenState(!open);
         }}>
         <img
-          src={renderPNGFromArrayBuffer(props.user.avatar)}
+          src={
+            props.user.profilePhotoURL
+              ? props.user.profilePhotoURL
+              : renderPNGFromArrayBuffer(props.user.avatar)
+          }
           alt="user-mini"
           className="rounded w-16 sm:hidden"
           onClick={() => {
@@ -43,7 +47,11 @@ const User = props => {
           }}
         />
         <img
-          src={renderPNGFromArrayBuffer(props.user.avatar)}
+          src={
+            props.user.profilePhotoURL
+              ? props.user.profilePhotoURL
+              : renderPNGFromArrayBuffer(props.user.avatar)
+          }
           alt="user-mini"
           className="hidden rounded w-16 sm:block sm:w-24 sm:ml-auto sm:mr-auto md:h-8 md:w-8 md:inline md:m-0 md:mr-2"
         />

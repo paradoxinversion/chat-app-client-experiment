@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import AdminBanUser from "./adminBanUser";
 import UpdatePassword from "./updatePassword";
+import SetPhoto from "./setPhoto";
 const ControlPanel = ({
   blocklist,
   users,
@@ -61,6 +62,7 @@ const ControlPanel = ({
                       Change Username
                     </button>
                   </form> */}
+        <SetPhoto />
         <UpdatePassword />
         <div className="m-4 border p-4">
           <p className="mb-4">Blocked Users</p>

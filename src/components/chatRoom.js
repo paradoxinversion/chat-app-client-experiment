@@ -40,6 +40,7 @@ class ChatRoom extends React.Component {
   }
 
   componentDidMount() {
+    console.log(process.env.REACT_APP_ADMIN_USER_ROLE);
     const serverURL = process.env.REACT_APP_SERVER_URL;
 
     const socketUrl = `${serverURL}`;

@@ -5,7 +5,7 @@ const SetPhoto = ({ clientUser }) => {
   // const httpRegex = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
   const [photoURL, setPhotoURL] = useState("");
   return (
-    <form className="m-4 border p-4">
+    <form className="m-4 border p-4 lg:flex-grow lg:max-w-md">
       <p className="text-center mb-2">
         {" "}
         <strong>Profile Photo</strong>
@@ -48,7 +48,7 @@ const SetPhoto = ({ clientUser }) => {
       {clientUser.profilePhotoURL && (
         <div>
           <p>Current Photo</p>
-          <img alt="" className="max-w-md" src={clientUser.profilePhotoURL} />
+          <img alt="" className="max-w-xs" src={clientUser.profilePhotoURL} />
         </div>
       )}
     </form>

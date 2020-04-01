@@ -43,8 +43,8 @@ const ControlPanel = ({
       )}
       <div
         id="cp-user-controls"
-        className="border bg-gray-100 rounded flex-grow flex">
-        <div className="m-4 border p-4">
+        className="border bg-gray-100 rounded flex-grow lg:flex lg:flex-wrap lg:justify-between">
+        <div className="m-4 border p-4 flex-grow lg:max-w-sm xl:w-1/2">
           <p className="mb-4">Blocked Users</p>
           <p>Here you can manage your block list.</p>
           {blocklist.length > 0 ? (

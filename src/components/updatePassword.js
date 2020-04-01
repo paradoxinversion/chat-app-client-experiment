@@ -6,11 +6,11 @@ const UpdatePassword = () => {
   const [newPassword, setNewPassword] = useState("");
   const [repeatNewPassword, setRepeatNewPassword] = useState("");
   return (
-    <form className="m-4 border p-4 flex flex-col">
+    <form className="m-4 border p-4 flex flex-col lg:flex-grow lg:max-w-sm">
       <p className="text-center mb-2">
         <strong>Change Password</strong>
       </p>
-      <p>here, you can update your password.</p>
+      <p>Here, you can update your password.</p>
       <label htmlFor="old-password">Old Password</label>
       <input
         type="password"

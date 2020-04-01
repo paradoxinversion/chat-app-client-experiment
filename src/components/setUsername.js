@@ -3,7 +3,7 @@ const SetUsername = ({ clientUser, socket }) => {
   const [username, setUsername] = useState(clientUser.username);
 
   return (
-    <form className="m-4 inline-block border p-4">
+    <form className="m-4 inline-block border p-4 lg:flex-grow lg:max-w-sm">
       <p className="text-center mb-2">
         <strong>Change Username</strong>
       </p>

@@ -21,7 +21,7 @@ const AdminPendingUsers = () => {
             <p>{user.username}</p>
             <button
               onClick={async () => {
-                const res = await axios.post(
+                await axios.post(
                   `${process.env.REACT_APP_SERVER_URL}chattr/confirm-user`,
                   { userId: user._id },
                   {

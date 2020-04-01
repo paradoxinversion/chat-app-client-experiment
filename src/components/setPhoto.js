@@ -41,7 +41,7 @@ const SetPhoto = ({ clientUser }) => {
       {clientUser.profilePhotoURL && (
         <div>
           <p>Current Photo</p>
-          <img src={clientUser.profilePhotoURL} />
+          <img alt="Current user photo" src={clientUser.profilePhotoURL} />
         </div>
       )}
     </form>

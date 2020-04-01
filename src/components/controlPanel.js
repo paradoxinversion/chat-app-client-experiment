@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import AdminBanUser from "./adminBanUser";
 import UpdatePassword from "./updatePassword";
 import SetPhoto from "./setPhoto";

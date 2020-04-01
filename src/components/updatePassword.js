@@ -37,7 +37,7 @@ const UpdatePassword = () => {
       />
       <button
         onClick={async () => {
-          if (newPassword == repeatNewPassword) {
+          if (newPassword === repeatNewPassword) {
             const res = await axios.post(
               `${process.env.REACT_APP_SERVER_URL}chattr/update-password`,
               { old: oldPassword, new: newPassword },

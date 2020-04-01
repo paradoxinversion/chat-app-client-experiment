@@ -35,7 +35,7 @@ export default function App(props) {
               onClick={async () => {
                 const logoutConfirmation = window.confirm("Log out?");
                 if (logoutConfirmation) {
-                  const logoutResult = await axios.get(
+                  await axios.get(
                     `${process.env.REACT_APP_SERVER_URL}chattr/logout`,
                     { withCredentials: true }
                   );
@@ -103,7 +103,7 @@ export default function App(props) {
                     e.preventDefault();
                     const serverURL = process.env.REACT_APP_SERVER_URL;
 
-                    const result = await axios.post(
+                    await axios.post(
                       `${serverURL}chattr/sign-up`,
                       {
                         username,

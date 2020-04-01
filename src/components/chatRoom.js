@@ -403,19 +403,18 @@ class ChatRoom extends React.Component {
                 }}
               />
               <button
-                className="rounded"
+                className="rounded border p-2 m-2"
                 onClick={e => {
                   e.preventDefault();
                   this.sendMessage(e, socket, chatInput, userSelected, false);
-                }}
-                className="border p-2 m-2">
+                }}>
                 Send
               </button>
               {this.state.me &&
                 this.state.me.role ===
                   process.env.REACT_APP_ADMIN_USER_ROLE && (
                   <button
-                    className="rounded"
+                    className="rounded border p-2 m-2"
                     onClick={e => {
                       e.preventDefault();
                       this.sendMessage(
@@ -425,8 +424,7 @@ class ChatRoom extends React.Component {
                         userSelected,
                         true
                       );
-                    }}
-                    className="border p-2 m-2">
+                    }}>
                     SERVER MESSAGE
                   </button>
                 )}

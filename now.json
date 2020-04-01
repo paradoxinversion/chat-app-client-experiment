@@ -3,7 +3,8 @@
     "env": {
       "REACT_APP_SERVER_URL": "https://www.paradoxinversion.com/",
       "REACT_APP_SERVER_SOCKET_PATH": "/chattr-app",
-      "REACT_APP_APP_ENDPOINT": "chattr/"
+      "REACT_APP_APP_ENDPOINT": "chattr/",
+      "REACT_APP_ADMIN_USER_ROLE": "2"
     }
   }
 }

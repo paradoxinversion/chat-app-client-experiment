@@ -5,6 +5,9 @@ import { renderPNGFromArrayBuffer } from "../utils";
 
 const PrivateChat = props => (
   <div className="flex flex-col h-full">
+    <button className="border rounded p-4" onClick={props.onPrivateChatExit}>
+      Exit Private Chat
+    </button>
     <div className="flex items-center mb-8">
       <img
         src={renderPNGFromArrayBuffer(props.user.avatar)}
@@ -17,19 +20,23 @@ const PrivateChat = props => (
         <button
           className="border rounded p-4"
           onClick={() => {
-            props.blockUser(props.user);
-            props.onPrivateChatExit();
+            const blockConfirmation = window.confirm(
+              `Block ${props.user.username}? Neither of you will see each other's messsages anymore. You can unblock them in the control panel later, if you want.`
+            );
+            if (blockConfirmation) {
+              props.blockUser(props.user);
+              props.onPrivateChatExit();
+            }
           }}>
           Block {props.user.username}
         </button>
       </div>
     </div>
-    <div onChange={props.setChatScrollState} className="border flex-grow p-4">
+    <div
+      onChange={props.setChatScrollState}
+      className="border flex-grow p-4 overflow-y-scroll">
       <ChatMessageList messages={props.userChatMessages} />
       <div id="pm-bottom" />
-      <button className="border rounded p-4" onClick={props.onPrivateChatExit}>
-        Exit Private Chat
-      </button>
     </div>
   </div>
 );

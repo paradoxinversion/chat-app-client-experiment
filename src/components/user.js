@@ -84,7 +84,12 @@ const User = props => {
             <button
               className="btn block mt-2 w-full"
               onClick={e => {
-                if (props.blockUserFn) props.blockUserFn(props.user);
+                const blockConfirmation = window.confirm(
+                  `Block ${props.user.username}? Neither of you will see each other's messsages anymore. You can unblock them in the control panel later, if you want.`
+                );
+                if (blockConfirmation) {
+                  if (props.blockUserFn) props.blockUserFn(props.user);
+                }
               }}>
               Block
             </button>

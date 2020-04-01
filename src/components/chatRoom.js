@@ -260,13 +260,14 @@ class ChatRoom extends React.Component {
    * Messages to specific users have the `toUID` & `to`
    * properties. General chat messages do not.
    */
-  sendMessage(e, socket, chatInput, user) {
-    if (chatInput) {
+  sendMessage(e, socket, chatInput, user, isServerMessage) {
+    if (chatInput.length > 0) {
       if (!user) {
         socket.emit("chat-message-sent", {
           message: chatInput,
           from: this.state.me.id,
-          fromUID: this.state.me.iid
+          fromUID: this.state.me.iid,
+          isServerMessage
         });
       } else {
         // evt, msg, user
@@ -405,11 +406,30 @@ class ChatRoom extends React.Component {
                 className="rounded"
                 onClick={e => {
                   e.preventDefault();
-                  this.sendMessage(e, socket, chatInput, userSelected);
+                  this.sendMessage(e, socket, chatInput, userSelected, false);
                 }}
                 className="border p-2 m-2">
                 Send
               </button>
+              {this.state.me &&
+                this.state.me.role ===
+                  process.env.REACT_APP_ADMIN_USER_ROLE && (
+                  <button
+                    className="rounded"
+                    onClick={e => {
+                      e.preventDefault();
+                      this.sendMessage(
+                        e,
+                        socket,
+                        chatInput,
+                        userSelected,
+                        true
+                      );
+                    }}
+                    className="border p-2 m-2">
+                    SERVER MESSAGE
+                  </button>
+                )}
             </form>
           </div>
         </div>

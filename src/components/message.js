@@ -17,7 +17,9 @@ const Message = ({ message, clickFn }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}>
       {message.id === "system" ? (
-        <p>{message.message}</p>
+        <p>
+          <strong>{message.message}</strong>
+        </p>
       ) : (
         <React.Fragment>
           <img

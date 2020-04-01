@@ -4,7 +4,7 @@ import ChatMessageList from "./chatMessageList";
 import io from "socket.io-client";
 import PrivateChat from "./privateChat";
 import ControlPanel from "./controlPanel";
-
+import store from "store";
 /**
  * At ChatRoom represents a space where many users
  * take part in a discussion.
@@ -44,7 +44,10 @@ class ChatRoom extends React.Component {
 
     const socketUrl = `${serverURL}`;
     const socket = io(socketUrl, {
-      transports: ["websocket"]
+      transports: ["websocket"],
+      query: {
+        token: store.get("chattr")
+      }
     });
     this.setState({ socket });
     socket.on("set-username", username => {

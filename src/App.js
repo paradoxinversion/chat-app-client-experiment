@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ChatRoom from "./components/chatRoom";
 import axios from "axios";
+import store from "store";
 import "./styles/tailwind.css";
 
 export default function App(props) {
@@ -12,7 +13,7 @@ export default function App(props) {
   async function checkStatus() {
     const res = await axios.get(
       `${process.env.REACT_APP_SERVER_URL}chattr/check-auth`,
-      { withCredentials: true }
+      { withCredentials: true, headers: { Bearer: store.get("chattr") } }
     );
     if (res.data.login === "success") {
       setAppState({ loggedIn: true });
@@ -37,8 +38,12 @@ export default function App(props) {
                 if (logoutConfirmation) {
                   await axios.get(
                     `${process.env.REACT_APP_SERVER_URL}chattr/logout`,
-                    { withCredentials: true }
+                    {
+                      withCredentials: true,
+                      headers: { Bearer: store.get("chattr") }
+                    }
                   );
+                  store.remove("chattr");
                   document.location.reload();
                 }
               }}>
@@ -92,6 +97,7 @@ export default function App(props) {
                       { withCredentials: true }
                     );
                     if (result.data.login === "success") {
+                      store.set("chattr", result.data.token);
                       setAppState({ loggedIn: true });
                     }
                   }}>

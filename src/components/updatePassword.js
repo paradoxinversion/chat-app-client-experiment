@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import store from "store";
 const UpdatePassword = () => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -36,12 +37,16 @@ const UpdatePassword = () => {
         }}
       />
       <button
-        onClick={async () => {
+        onClick={async e => {
+          e.preventDefault();
           if (newPassword === repeatNewPassword) {
             const res = await axios.post(
               `${process.env.REACT_APP_SERVER_URL}chattr/update-password`,
               { old: oldPassword, new: newPassword },
-              { withCredentials: true }
+              {
+                withCredentials: true,
+                headers: { Bearer: store.get("chattr") }
+              }
             );
             console.log(res);
           } else {

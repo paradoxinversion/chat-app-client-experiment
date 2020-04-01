@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import store from "store";
 const SetPhoto = ({ clientUser }) => {
   // const httpRegex = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
   const [photoURL, setPhotoURL] = useState("");
@@ -31,7 +32,10 @@ const SetPhoto = ({ clientUser }) => {
             await axios.post(
               `${process.env.REACT_APP_SERVER_URL}chattr/set-photo`,
               { photoURL },
-              { withCredentials: true }
+              {
+                withCredentials: true,
+                headers: { Bearer: store.get("chattr") }
+              }
             );
             // }
           }}>

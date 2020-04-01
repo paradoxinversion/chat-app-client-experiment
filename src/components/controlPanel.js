@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import AdminBanUser from "./adminBanUser";
 import UpdatePassword from "./updatePassword";
 import SetPhoto from "./setPhoto";
+import SetUsername from "./setUsername";
+import AdminPendingUsers from "./adminPendingUsers";
 const ControlPanel = ({
   blocklist,
   users,
@@ -35,37 +37,19 @@ const ControlPanel = ({
               banUserFn={banUserFn}
               socket={socket}
             />
+            <AdminPendingUsers />
           </div>
         </div>
       )}
       <div
         id="cp-user-controls"
         className="border bg-gray-100 rounded flex-grow">
-        {/* <form className="m-4 inline-block border p-4">
-                    <p className="text-center mb-2">Change Username</p>
-                    <input
-                      className="border"
-                      type="text"
-                      name="usernameChange"
-                      onChange={this.handleInput}
-                      value={this.state.usernameChange}
-                    />
-                    <button
-                      className="block border w-full mt-2"
-                      onClick={e => {
-                        e.preventDefault();
-                        socket.emit("set-username", {
-                          username: this.state.usernameChange
-                        });
-                        this.setState({ usernameChange: "" });
-                      }}>
-                      Change Username
-                    </button>
-                  </form> */}
-        <SetPhoto />
+        <SetUsername clientUser={clientUser} socket={socket} />
+        <SetPhoto clientUser={clientUser} />
         <UpdatePassword />
         <div className="m-4 border p-4">
           <p className="mb-4">Blocked Users</p>
+          <p>Here you can manage your block list.</p>
           {blocklist.length > 0 ? (
             blocklist.map(blockedUserId => {
               const blockedUser = users.find(

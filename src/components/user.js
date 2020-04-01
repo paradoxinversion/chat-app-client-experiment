@@ -36,7 +36,7 @@ const User = props => {
               ? props.user.profilePhotoURL
               : renderPNGFromArrayBuffer(props.user.avatar)
           }
-          alt="user-mini"
+          alt={props.user.username}
           className="rounded w-16 sm:hidden"
           onClick={() => {
             if (props.isClient) {
@@ -52,7 +52,7 @@ const User = props => {
               ? props.user.profilePhotoURL
               : renderPNGFromArrayBuffer(props.user.avatar)
           }
-          alt="user-mini"
+          alt={props.user.username}
           className="hidden rounded w-16 sm:block sm:w-24 sm:ml-auto sm:mr-auto md:h-8 md:w-8 md:inline md:m-0 md:mr-2"
         />
         <span className="hidden md:inline text-sm">{props.user.username}</span>

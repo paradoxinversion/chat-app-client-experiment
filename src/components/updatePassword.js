@@ -7,8 +7,10 @@ const UpdatePassword = () => {
   const [repeatNewPassword, setRepeatNewPassword] = useState("");
   return (
     <form className="m-4 border p-4 flex flex-col">
-      <p>Change Password</p>
-      <p>here, you can update your password. </p>
+      <p className="text-center mb-2">
+        <strong>Change Password</strong>
+      </p>
+      <p>here, you can update your password.</p>
       <label htmlFor="old-password">Old Password</label>
       <input
         type="password"
@@ -37,6 +39,7 @@ const UpdatePassword = () => {
         }}
       />
       <button
+        className="btn mt-2"
         onClick={async e => {
           e.preventDefault();
           if (newPassword === repeatNewPassword) {

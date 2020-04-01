@@ -6,6 +6,8 @@ This is a client for a simple chat room, using socketio. Right now there is one 
 
 Install dependencies via `npm` or `yarn`.
 
+## Environment
+
 ### Scripts
 
 #### start

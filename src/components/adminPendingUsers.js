@@ -15,13 +15,14 @@ const AdminPendingUsers = () => {
       });
   }, []);
   return (
-    <div>
-      <p>Pending Users</p>
-      <div>
+    <div className="border mt-4 md:mt-0 md:flex-grow md:max-w-sm">
+      <p className="text-center">Pending Users</p>
+      <div className="p-4">
         {pendingUsers.map(user => (
-          <div>
-            <p>{user.username}</p>
+          <div className=" rounded flex justify-between">
+            <span className="mr-4">{user.username}</span>
             <button
+              className="border px-2 py-1 rounded items-center"
               onClick={async () => {
                 await axios.post(
                   `${process.env.REACT_APP_SERVER_URL}chattr/confirm-user`,

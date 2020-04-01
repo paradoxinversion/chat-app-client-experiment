@@ -16,7 +16,7 @@ const ControlPanel = ({
   return (
     <div className="flex flex-col h-full">
       <header>
-        <p>User Control Panel</p>
+        <p className="text-xl">User Control Panel</p>
         <button
           className="border rounded mt-4 p-2 mb-4"
           onClick={() => {
@@ -28,9 +28,9 @@ const ControlPanel = ({
       {isAdmin && (
         <div
           id="cp-admin-controls "
-          className="border bg-gray-100 rounded mb-4">
-          <p className="ml-4">Admin Controls</p>
-          <div className="border m-4 p-4">
+          className="border bg-gray-100 rounded p-2 mt-4">
+          <p className="text-lg">Admin Controls</p>
+          <div className="flex flex-col md:flex-row">
             <AdminBanUser
               clientUser={clientUser}
               users={users}
@@ -43,10 +43,7 @@ const ControlPanel = ({
       )}
       <div
         id="cp-user-controls"
-        className="border bg-gray-100 rounded flex-grow">
-        <SetUsername clientUser={clientUser} socket={socket} />
-        <SetPhoto clientUser={clientUser} />
-        <UpdatePassword />
+        className="border bg-gray-100 rounded flex-grow flex">
         <div className="m-4 border p-4">
           <p className="mb-4">Blocked Users</p>
           <p>Here you can manage your block list.</p>
@@ -75,6 +72,9 @@ const ControlPanel = ({
             <p>You haven't blocked any users.</p>
           )}
         </div>
+        <SetUsername clientUser={clientUser} socket={socket} />
+        <SetPhoto clientUser={clientUser} />
+        <UpdatePassword />
       </div>
     </div>
   );

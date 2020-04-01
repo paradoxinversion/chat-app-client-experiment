@@ -6,7 +6,10 @@ const SetPhoto = ({ clientUser }) => {
   const [photoURL, setPhotoURL] = useState("");
   return (
     <form className="m-4 border p-4">
-      <p>Profile Photo</p>
+      <p className="text-center mb-2">
+        {" "}
+        <strong>Profile Photo</strong>
+      </p>
       <p>
         Here, you can link to a profile photo on the internet. If you're not
         sure where to upload a photo, try imgur. Be sure to include the full
@@ -24,7 +27,7 @@ const SetPhoto = ({ clientUser }) => {
           }}
         />
         <button
-          className="inline"
+          className="btn inline"
           onClick={async e => {
             e.preventDefault();
             // console.log(photoURL.match(httpRegex));
@@ -45,7 +48,7 @@ const SetPhoto = ({ clientUser }) => {
       {clientUser.profilePhotoURL && (
         <div>
           <p>Current Photo</p>
-          <img alt="" src={clientUser.profilePhotoURL} />
+          <img alt="" className="max-w-md" src={clientUser.profilePhotoURL} />
         </div>
       )}
     </form>

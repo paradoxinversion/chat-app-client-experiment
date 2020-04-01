@@ -4,8 +4,10 @@ const SetUsername = ({ clientUser, socket }) => {
 
   return (
     <form className="m-4 inline-block border p-4">
-      <p className="text-center mb-2">Change Username</p>
-      <p>
+      <p className="text-center mb-2">
+        <strong>Change Username</strong>
+      </p>
+      <p className="mb-4">
         Here you can change your username.{" "}
         <strong>
           Your username is your login. Don't change it if you want to keep it,
@@ -13,7 +15,7 @@ const SetUsername = ({ clientUser, socket }) => {
         </strong>
       </p>
       <input
-        className="border"
+        className="border w-full"
         type="text"
         name="usernameChange"
         onChange={e => {

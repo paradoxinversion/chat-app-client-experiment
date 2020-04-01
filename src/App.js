@@ -10,6 +10,10 @@ export default function App(props) {
   });
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordRepeat, setPasswordRepeat] = useState("");
+  const [passwordMismatch, setPasswordMismatch] = useState(false);
+  const [signupSuccess, setSignupSuccess] = useState(false);
+
   async function checkStatus() {
     const res = await axios.get(
       `${process.env.REACT_APP_SERVER_URL}chattr/check-auth`,
@@ -58,70 +62,103 @@ export default function App(props) {
           </React.Fragment>
         ) : (
           <div className="border-t">
-            <div className="m-4">
-              <p className="max-w-lg text-center ml-auto mr-auto">
-                Welcome to the chat room. You'll need to sign up and sign in to
-                get in in the conversation. <br />
-                Don't be a jerk.
+            {signupSuccess ? (
+              <p className="m-4 text-center">
+                You've successfully signed up. You'll need to be confirmed as
+                user before you can log in.
               </p>
-              <form className="bg-gray-100 flex flex-col max-w-md p-4 ml-auto mr-auto mt-4 border rounded">
-                <label htmlFor="username">Username</label>
-                <input
-                  className="border rounded"
-                  name="username"
-                  id="username"
-                  type="text"
-                  value={username}
-                  onChange={e => setUsername(e.target.value)}
-                />
-                <label htmlFor="password">Password</label>
-                <input
-                  className="border rounded"
-                  name="password"
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                />
-                <button
-                  className="border rounded bg-gray-200 mt-4"
-                  onClick={async e => {
-                    e.preventDefault();
-                    const serverURL = process.env.REACT_APP_SERVER_URL;
-                    const result = await axios.post(
-                      `${serverURL}chattr/sign-in`,
-                      {
-                        username,
-                        password
-                      },
-                      { withCredentials: true }
-                    );
-                    if (result.data.login === "success") {
-                      store.set("chattr", result.data.token);
-                      setAppState({ loggedIn: true });
-                    }
-                  }}>
-                  Log In
-                </button>
-                <button
-                  className="btn"
-                  onClick={async e => {
-                    e.preventDefault();
-                    const serverURL = process.env.REACT_APP_SERVER_URL;
+            ) : (
+              <div className="m-4">
+                <p className="max-w-lg text-center ml-auto mr-auto">
+                  Welcome to the chat room. You'll need to sign up and sign in
+                  to get in in the conversation. <br />
+                  Don't be a jerk.
+                </p>
+                <form className="bg-gray-100 flex flex-col max-w-md p-4 ml-auto mr-auto mt-4 border rounded">
+                  <label htmlFor="username">Username</label>
+                  <input
+                    className="border rounded"
+                    name="username"
+                    id="username"
+                    type="text"
+                    value={username}
+                    onChange={e => setUsername(e.target.value)}
+                  />
+                  <label htmlFor="password">Password</label>
+                  <input
+                    className="border rounded"
+                    name="password"
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                  />
+                  <button
+                    className="border rounded bg-gray-200 mt-4 mb-4"
+                    onClick={async e => {
+                      e.preventDefault();
+                      const serverURL = process.env.REACT_APP_SERVER_URL;
+                      const result = await axios.post(
+                        `${serverURL}chattr/sign-in`,
+                        {
+                          username,
+                          password
+                        },
+                        { withCredentials: true }
+                      );
+                      if (result.data.login === "success") {
+                        store.set("chattr", result.data.token);
+                        setAppState({ loggedIn: true });
+                      }
+                    }}>
+                    Log In
+                  </button>
+                  <label htmlFor="password-repeat">
+                    If signing up, repeat your password below
+                  </label>
+                  <input
+                    className="border rounded"
+                    type="password"
+                    name="password-repeat"
+                    value={passwordRepeat}
+                    onChange={e => {
+                      setPasswordRepeat(e.target.value);
+                    }}
+                    onBlur={() => {
+                      debugger;
+                      if (password !== passwordRepeat) {
+                        setPasswordMismatch(true);
+                      } else {
+                        setPasswordMismatch(false);
+                      }
+                    }}
+                  />
+                  {passwordMismatch && <p>Passwords don't match!</p>}
+                  <button
+                    className="btn mt-4"
+                    onClick={async e => {
+                      e.preventDefault();
+                      if (!passwordMismatch) {
+                        const serverURL = process.env.REACT_APP_SERVER_URL;
 
-                    await axios.post(
-                      `${serverURL}chattr/sign-up`,
-                      {
-                        username,
-                        password
-                      },
-                      { withCredentials: true }
-                    );
-                  }}>
-                  Sign Up
-                </button>
-              </form>
-            </div>
+                        const signupResult = await axios.post(
+                          `${serverURL}chattr/sign-up`,
+                          {
+                            username,
+                            password
+                          },
+                          { withCredentials: true }
+                        );
+                        if (signupResult.data.signup === "success") {
+                          setSignupSuccess(true);
+                        }
+                      }
+                    }}>
+                    Sign Up
+                  </button>
+                </form>
+              </div>
+            )}
           </div>
         )}
       </div>

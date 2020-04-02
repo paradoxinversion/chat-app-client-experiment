@@ -37,7 +37,6 @@ const AdminAllUsers = ({ clientUser }) => {
                     await axios.delete(
                       `${process.env.REACT_APP_SERVER_URL}chattr/user`,
                       {
-                        withCredentials: true,
                         headers: { Bearer: store.get("chattr") },
                         data: { userId: user._id }
                       }

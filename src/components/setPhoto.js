@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import store from "store";
-const SetPhoto = ({ clientUser }) => {
-  // const httpRegex = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
+const SetPhoto = ({ clientUser, socket }) => {
   const [photoURL, setPhotoURL] = useState("");
   return (
     <form className="m-4 border p-4 lg:flex-grow lg:max-w-md">
@@ -32,15 +31,19 @@ const SetPhoto = ({ clientUser }) => {
             e.preventDefault();
             // console.log(photoURL.match(httpRegex));
             // if (photoURL.match(httpRegex)) {
-            await axios.post(
-              `${process.env.REACT_APP_SERVER_URL}chattr/set-photo`,
-              { photoURL },
-              {
-                withCredentials: true,
-                headers: { Bearer: store.get("chattr") }
-              }
-            );
+            // await axios.post(
+            //   `${process.env.REACT_APP_SERVER_URL}chattr/set-photo`,
+            //   { photoURL },
+            //   {
+            //     withCredentials: true,
+            //     headers: { Bearer: store.get("chattr") }
+            //   }
+            // );
             // }
+            socket.emit("set-user-photo", {
+              userId: clientUser.iid,
+              photoURL
+            });
           }}>
           Set
         </button>

@@ -37,7 +37,7 @@ const User = props => {
               : renderPNGFromArrayBuffer(props.user.avatar)
           }
           alt={props.user.username}
-          className="rounded w-16 sm:hidden"
+          className="rounded w-16 h-16 sm:hidden object-scale-down"
           onClick={() => {
             if (props.isClient) {
               if (props.showUserCP) props.showUserCP(true);
@@ -53,7 +53,7 @@ const User = props => {
               : renderPNGFromArrayBuffer(props.user.avatar)
           }
           alt={props.user.username}
-          className="hidden rounded w-16 sm:block sm:w-24 sm:ml-auto sm:mr-auto md:h-8 md:w-8 md:inline md:m-0 md:mr-2"
+          className="hidden rounded w-16 h-16 object-scale-down sm:block sm:w-24 sm:ml-auto sm:mr-auto md:h-8 md:w-8 md:inline md:m-0 md:mr-2"
         />
         <span className="hidden md:inline text-sm">{props.user.username}</span>
       </div>

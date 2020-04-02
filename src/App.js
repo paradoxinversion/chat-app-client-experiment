@@ -13,6 +13,7 @@ export default function App(props) {
   const [passwordRepeat, setPasswordRepeat] = useState("");
   const [passwordMismatch, setPasswordMismatch] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
+  const [signinError, setSigninError] = useState(null);
 
   async function checkStatus() {
     const res = await axios.get(
@@ -98,21 +99,28 @@ export default function App(props) {
                     onClick={async e => {
                       e.preventDefault();
                       const serverURL = process.env.REACT_APP_SERVER_URL;
-                      const result = await axios.post(
-                        `${serverURL}chattr/sign-in`,
-                        {
-                          username,
-                          password
-                        },
-                        { withCredentials: true }
-                      );
-                      if (result.data.login === "success") {
-                        store.set("chattr", result.data.token);
-                        setAppState({ loggedIn: true });
+                      try {
+                        const result = await axios.post(
+                          `${serverURL}chattr/sign-in`,
+                          {
+                            username,
+                            password
+                          },
+                          { withCredentials: true }
+                        );
+                        if (result.status === 200) {
+                          store.set("chattr", result.data.token);
+                          setAppState({ loggedIn: true });
+                        } else {
+                          setSigninError(result.data.error);
+                        }
+                      } catch (e) {
+                        throw e;
                       }
                     }}>
                     Log In
                   </button>
+                  {signinError && <p className="text-red-700">{signinError}</p>}
                   <label htmlFor="password-repeat">
                     If signing up, repeat your password below
                   </label>

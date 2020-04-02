@@ -10,9 +10,13 @@ const PrivateChat = props => (
     </button>
     <div className="flex items-center mb-8">
       <img
-        src={renderPNGFromArrayBuffer(props.user.avatar)}
+        src={
+          props.user.profilePhotoURL
+            ? props.user.profilePhotoURL
+            : renderPNGFromArrayBuffer(props.user.avatar)
+        }
         alt={props.user.username}
-        className="border-2 mr-4 inline-block rounded-full w-16 h-16"
+        className="border-2 mr-4 inline-block rounded-full w-16 h-16 object-scale-down"
       />
       <div>
         <p>Private chat with</p>

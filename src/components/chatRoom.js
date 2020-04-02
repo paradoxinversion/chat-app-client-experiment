@@ -135,6 +135,17 @@ class ChatRoom extends React.Component {
       }
     });
 
+    socket.on("room-user-update", ({ users }) => {
+      const me = users.find(user => {
+        return user.iid === this.state.me.iid;
+      });
+
+      this.setState({
+        users,
+        me
+      });
+    });
+
     socket.on("pm", data => {
       // get the pm history w/ that user key
       // copy it, add as with normal messages

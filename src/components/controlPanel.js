@@ -73,7 +73,7 @@ const ControlPanel = ({
           )}
         </div>
         <SetUsername clientUser={clientUser} socket={socket} />
-        <SetPhoto clientUser={clientUser} />
+        <SetPhoto clientUser={clientUser} socket={socket} />
         <UpdatePassword />
       </div>
     </div>

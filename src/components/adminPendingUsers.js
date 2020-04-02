@@ -3,6 +3,7 @@ import axios from "axios";
 import store from "store";
 const AdminPendingUsers = () => {
   const [pendingUsers, setPendingUsers] = useState([]);
+  const [fetchError, setFetchError] = useState(null);
   useEffect(() => {
     axios
       .get(`${process.env.REACT_APP_SERVER_URL}chattr/pending-users`, {
@@ -10,8 +11,11 @@ const AdminPendingUsers = () => {
         headers: { Bearer: store.get("chattr") }
       })
       .then(res => {
-        console.log(res);
-        setPendingUsers(res.data.pendingUsers);
+        if (res.status === 200) {
+          setPendingUsers(res.data.pendingUsers);
+        } else {
+          setFetchError(res.data.error);
+        }
       });
   }, []);
   return (
@@ -46,6 +50,7 @@ const AdminPendingUsers = () => {
           </div>
         ))}
       </div>
+      {fetchError && <p className="text-red-700">{fetchError}</p>}
     </div>
   );
 };

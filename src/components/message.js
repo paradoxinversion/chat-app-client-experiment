@@ -23,8 +23,12 @@ const Message = ({ message, clickFn }) => {
       ) : (
         <React.Fragment>
           <img
-            className="rounded-full mr-4 h-16"
-            src={renderPNGFromArrayBuffer(message.user.avatar)}
+            className="rounded-full mr-4 h-16 w-16 object-scale-down"
+            src={
+              message.user.profilePhotoURL
+                ? message.user.profilePhotoURL
+                : renderPNGFromArrayBuffer(message.user.avatar)
+            }
             alt="the-user"
             onClick={e => {
               if (clickFn) clickFn(e);

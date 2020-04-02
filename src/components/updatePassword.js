@@ -5,6 +5,8 @@ const UpdatePassword = () => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [repeatNewPassword, setRepeatNewPassword] = useState("");
+  const [passwordUpdateResult, setPasswordUpdateResult] = useState(null);
+  const [passwordUpdateError, setPasswordUpdateError] = useState(null);
   return (
     <form className="m-4 border p-4 flex flex-col lg:flex-grow lg:max-w-sm">
       <p className="text-center mb-2">
@@ -51,13 +53,21 @@ const UpdatePassword = () => {
                 headers: { Bearer: store.get("chattr") }
               }
             );
-            console.log(res);
+            if (res.status === 200) {
+              if (passwordUpdateError) setPasswordUpdateError(null);
+              setPasswordUpdateResult(res.data.result);
+            } else {
+              if (passwordUpdateResult) setPasswordUpdateResult(null);
+              setPasswordUpdateError(res.data.error);
+            }
           } else {
             console.log("Password mismatch");
           }
         }}>
         Change Password
       </button>
+      {passwordUpdateResult && <div>{passwordUpdateResult}</div>}
+      {passwordUpdateError && <div>{passwordUpdateError}</div>}
     </form>
   );
 };

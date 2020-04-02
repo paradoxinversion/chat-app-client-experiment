@@ -13,17 +13,21 @@ export default function App(props) {
   const [passwordRepeat, setPasswordRepeat] = useState("");
   const [passwordMismatch, setPasswordMismatch] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
+  const [signupError, setSignupError] = useState(false);
   const [signinError, setSigninError] = useState(null);
 
   async function checkStatus() {
+    const headers = store.get("chattr") ? { Bearer: store.get("chattr") } : {};
     const res = await axios.get(
       `${process.env.REACT_APP_SERVER_URL}chattr/check-auth`,
-      { withCredentials: true, headers: { Bearer: store.get("chattr") } }
+      { withCredentials: true, headers }
     );
-    if (res.data.login === "success") {
+    if (res.status === 200) {
       setAppState({ loggedIn: true });
       setUsername("");
       setPassword("");
+    } else {
+      setSigninError(res.data.error);
     }
   }
   useEffect(() => {
@@ -133,7 +137,6 @@ export default function App(props) {
                       setPasswordRepeat(e.target.value);
                     }}
                     onBlur={() => {
-                      debugger;
                       if (password !== passwordRepeat) {
                         setPasswordMismatch(true);
                       } else {
@@ -141,7 +144,9 @@ export default function App(props) {
                       }
                     }}
                   />
-                  {passwordMismatch && <p>Passwords don't match!</p>}
+                  {passwordMismatch && (
+                    <p className="text-red-700">Passwords don't match!</p>
+                  )}
                   <button
                     className="btn mt-4"
                     onClick={async e => {
@@ -157,13 +162,16 @@ export default function App(props) {
                           },
                           { withCredentials: true }
                         );
-                        if (signupResult.data.signup === "success") {
+                        if (signupResult.status === 200) {
                           setSignupSuccess(true);
+                        } else {
+                          setSignupError(signupResult.data.error);
                         }
                       }
                     }}>
                     Sign Up
                   </button>
+                  {signupError && <p className="text-red-700">{signupError}</p>}
                 </form>
               </div>
             )}

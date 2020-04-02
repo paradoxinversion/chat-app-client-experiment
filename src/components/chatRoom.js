@@ -151,7 +151,6 @@ class ChatRoom extends React.Component {
       // copy it, add as with normal messages
       // the to for sender, and from for reciever
       const allPms = this.state.privateChatMessages;
-      // debugger;
       if (data.to === this.state.me.id) {
         // this is something we recieved.
         let userPmHistory = allPms[data.from];
@@ -311,9 +310,9 @@ class ChatRoom extends React.Component {
   }
 
   banUser(userId) {
-    debugger;
     if (this.state.me.role === process.env.REACT_APP_ADMIN_USER_ROLE) {
-      this.state.socket.emit("ban-user", userId);
+      const client = this.state.users.find(user => user.iid === userId);
+      this.state.socket.emit("ban-user", client.id);
     }
   }
   render() {

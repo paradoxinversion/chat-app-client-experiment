@@ -4,6 +4,7 @@ import UpdatePassword from "./updatePassword";
 import SetPhoto from "./setPhoto";
 import SetUsername from "./setUsername";
 import AdminPendingUsers from "./adminPendingUsers";
+import AdminAllUsers from "./adminAllUsers";
 const ControlPanel = ({
   blocklist,
   users,
@@ -38,6 +39,7 @@ const ControlPanel = ({
               socket={socket}
             />
             <AdminPendingUsers />
+            <AdminAllUsers clientUser={clientUser} />
           </div>
         </div>
       )}

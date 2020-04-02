@@ -29,17 +29,6 @@ const SetPhoto = ({ clientUser, socket }) => {
           className="btn inline"
           onClick={async e => {
             e.preventDefault();
-            // console.log(photoURL.match(httpRegex));
-            // if (photoURL.match(httpRegex)) {
-            // await axios.post(
-            //   `${process.env.REACT_APP_SERVER_URL}chattr/set-photo`,
-            //   { photoURL },
-            //   {
-            //     withCredentials: true,
-            //     headers: { Bearer: store.get("chattr") }
-            //   }
-            // );
-            // }
             socket.emit("set-user-photo", {
               userId: clientUser.iid,
               photoURL

@@ -61,13 +61,17 @@ const UpdatePassword = () => {
               setPasswordUpdateError(res.data.error);
             }
           } else {
-            console.log("Password mismatch");
+            setPasswordUpdateError("New passwords do not match.");
           }
         }}>
         Change Password
       </button>
-      {passwordUpdateResult && <div>{passwordUpdateResult}</div>}
-      {passwordUpdateError && <div>{passwordUpdateError}</div>}
+      {passwordUpdateResult && (
+        <div className="text-green-700">{passwordUpdateResult}</div>
+      )}
+      {passwordUpdateError && (
+        <div className="text-red-700">{passwordUpdateError}</div>
+      )}
     </form>
   );
 };

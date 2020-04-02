@@ -1,4 +1,6 @@
 import React from "react";
+import axios from "axios";
+import store from "store";
 
 class AdminBanUser extends React.Component {
   constructor(props) {
@@ -6,15 +8,31 @@ class AdminBanUser extends React.Component {
     this.state = {
       selectedUser: "",
       bannedUsers: [],
-      initalCheck: false
+      initalCheck: false,
+      allUsers: []
     };
   }
 
-  componentDidMount() {
-    this.props.socket.emit("get-banned-users");
-    this.props.socket.on("get-banned-users", ({ users }) => {
-      console.log("BANNED USERS", users);
-      this.setState({ bannedUsers: users });
+  async componentDidMount() {
+    const usersRes = await axios.get(
+      `${process.env.REACT_APP_SERVER_URL}chattr/users`,
+      {
+        withCredentials: true,
+        headers: { Bearer: store.get("chattr") }
+      }
+    );
+
+    const bannedRes = await axios.get(
+      `${process.env.REACT_APP_SERVER_URL}chattr/banned-users`,
+      {
+        withCredentials: true,
+        headers: { Bearer: store.get("chattr") },
+        params: { accountStatus: 2 }
+      }
+    );
+    this.setState({
+      allUsers: usersRes.data.users,
+      bannedUsers: bannedRes.data.users
     });
   }
 
@@ -35,10 +53,10 @@ class AdminBanUser extends React.Component {
                 this.setState({ selectedUser: e.target.value });
               }}>
               <option value="">Select a user</option>
-              {this.props.users
-                .filter(user => user.id !== this.props.clientUser.id)
+              {this.state.allUsers
+                .filter(user => user._id !== this.props.clientUser.iid)
                 .map(user => (
-                  <option value={user.id}>{user.username}</option>
+                  <option value={user._id}>{user.username}</option>
                 ))}
             </select>
             <button
@@ -46,6 +64,11 @@ class AdminBanUser extends React.Component {
               onClick={e => {
                 e.preventDefault();
                 this.props.banUserFn(this.state.selectedUser);
+                this.setState({
+                  allUsers: this.state.bannedUsers.filter(
+                    user => user._id !== this.state.selectedUser
+                  )
+                });
               }}>
               Ban User
             </button>
@@ -54,7 +77,6 @@ class AdminBanUser extends React.Component {
             <select
               className="border rounded appearance-none p-1"
               onChange={e => {
-                debugger;
                 this.setState({ selectedUser: e.target.value });
               }}>
               <option value="">Select a user</option>
@@ -71,6 +93,11 @@ class AdminBanUser extends React.Component {
                 this.props.socket.emit("change-user-account-status", {
                   userIID: this.state.selectedUser,
                   status: 0
+                });
+                this.setState({
+                  bannedUsers: this.state.bannedUsers.filter(
+                    user => user._id !== this.state.selectedUser
+                  )
                 });
               }}>
               Unban User

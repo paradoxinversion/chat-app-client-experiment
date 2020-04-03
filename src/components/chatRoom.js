@@ -278,8 +278,8 @@ class ChatRoom extends React.Component {
       if (!user) {
         socket.emit("chat-message-sent", {
           message: chatInput,
-          from: this.state.me.id,
-          fromUID: this.state.me.iid,
+          from: this.state.me.socketId,
+          fromUID: this.state.me.userId,
           isServerMessage
         });
       } else {
@@ -287,9 +287,9 @@ class ChatRoom extends React.Component {
         socket.emit("chat-message-sent", {
           message: chatInput,
           to: user.id,
-          toUID: user.iid,
-          from: this.state.me.id,
-          fromUID: this.state.me.iid
+          toUID: user.userId,
+          from: this.state.me.socketId,
+          fromUID: this.state.me.userId
         });
       }
       this.setState({

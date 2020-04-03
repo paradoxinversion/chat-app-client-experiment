@@ -302,11 +302,11 @@ class ChatRoom extends React.Component {
   /***
    * Add a specified user to the current user's blocklist.
    */
-  blockUser(user) {
+  blockUser(userToBlock) {
     const blocklist = this.state.blocklist.slice();
-    blocklist.push(user.id);
+    blocklist.push(userToBlock.socketId);
     this.setState({ blocklist });
-    this.state.socket.emit("block-user", user.id);
+    this.state.socket.emit("block-user", userToBlock.socketId);
   }
 
   banUser(userId) {

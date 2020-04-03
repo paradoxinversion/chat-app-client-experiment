@@ -103,6 +103,7 @@ class ChatRoom extends React.Component {
         });
       }
     });
+
     socket.on("unblock-user", ({ blocklist, blockedBy }) => {
       if (blocklist) {
         this.setState({

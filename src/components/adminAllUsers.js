@@ -23,7 +23,7 @@ const AdminAllUsers = ({ clientUser }) => {
       <p className="text-center">Pending Users</p>
       <div className="p-4">
         {users
-          .filter(user => user._id !== clientUser.iid)
+          .filter(user => user._id !== clientUser.userId)
           .map(user => (
             <div className=" rounded flex justify-between">
               <span className="mr-4">{user.username}</span>

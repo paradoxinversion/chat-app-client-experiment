@@ -54,7 +54,7 @@ class AdminBanUser extends React.Component {
               }}>
               <option value="">Select a user</option>
               {this.state.allUsers
-                .filter(user => user._id !== this.props.clientUser.iid)
+                .filter(user => user._id !== this.props.clientUser.userId)
                 .map(user => (
                   <option value={user._id}>{user.username}</option>
                 ))}

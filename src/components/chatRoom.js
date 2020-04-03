@@ -226,8 +226,8 @@ class ChatRoom extends React.Component {
    * @param {*} user
    */
   openPrivateChat(user) {
-    this.setState({ userSelected: user, privateChannel: user.id });
-    this.state.socket.emit("private-chat-initiated", user.id);
+    this.setState({ userSelected: user, privateChannel: user.socketId });
+    this.state.socket.emit("private-chat-initiated", user.socketId);
   }
 
   /**
@@ -311,8 +311,10 @@ class ChatRoom extends React.Component {
 
   banUser(userId) {
     if (this.state.me.role === process.env.REACT_APP_ADMIN_USER_ROLE) {
-      const client = this.state.users.find(user => user.iid === userId);
-      this.state.socket.emit("ban-user", client.id);
+      const userClientToBan = this.state.users.find(
+        user => user.userId === userId
+      );
+      this.state.socket.emit("ban-user", userClientToBan.socketId);
     }
   }
   render() {

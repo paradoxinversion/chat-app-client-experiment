@@ -119,8 +119,8 @@ class ChatRoom extends React.Component {
 
     socket.on("room-user-change", data => {
       if (
-        !this.state.blockedBy.includes(data.user.iid) &&
-        !this.state.blocklist.includes(data.user.iid)
+        !this.state.blockedBy.includes(data.user.userId) &&
+        !this.state.blocklist.includes(data.user.userId)
       ) {
         const messages = this.state.chatMessages.slice();
         messages.push({
@@ -137,7 +137,7 @@ class ChatRoom extends React.Component {
 
     socket.on("room-user-update", ({ users }) => {
       const me = users.find(user => {
-        return user.iid === this.state.me.iid;
+        return user.userId === this.state.me.userId;
       });
 
       this.setState({

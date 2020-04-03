@@ -195,10 +195,10 @@ class ChatRoom extends React.Component {
    * @param {*} user
    */
   initiatePrivateChat(user) {
-    if (user.id !== this.state.me.id) {
+    if (user.socketId !== this.state.me.socketId) {
       this.openPrivateChat(user);
       const unacknowledgedPms = this.state.unacknowledgedPms.filter(
-        unacknowledgedUser => user.id !== unacknowledgedUser
+        unacknowledgedUser => user.socketId !== unacknowledgedUser
       );
       this.setState({
         unacknowledgedPms

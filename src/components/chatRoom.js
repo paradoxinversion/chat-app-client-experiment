@@ -274,7 +274,7 @@ class ChatRoom extends React.Component {
    * properties. General chat messages do not.
    */
   sendMessage(e, socket, chatInput, user, isServerMessage) {
-    if (chatInput.length > 0) {
+    if (chatInput.trim().length > 0) {
       if (!user) {
         socket.emit("chat-message-sent", {
           message: chatInput,
@@ -286,7 +286,7 @@ class ChatRoom extends React.Component {
         // evt, msg, user
         socket.emit("chat-message-sent", {
           message: chatInput,
-          to: user.id,
+          to: user.socketId,
           toUID: user.userId,
           from: this.state.me.socketId,
           fromUID: this.state.me.userId

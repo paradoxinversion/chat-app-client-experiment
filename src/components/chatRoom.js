@@ -151,24 +151,25 @@ class ChatRoom extends React.Component {
       // copy it, add as with normal messages
       // the to for sender, and from for reciever
       const allPms = this.state.privateChatMessages;
-      if (data.to === this.state.me.id) {
+      if (data.to === this.state.me.socketId) {
         // this is something we recieved.
         let userPmHistory = allPms[data.from];
         if (!userPmHistory) allPms[data.from] = [];
         allPms[data.from].push(data);
       }
 
-      if (data.from === this.state.me.id) {
+      if (data.from === this.state.me.socketId) {
         // this is to someone else
         let userPmHistory = allPms[data.to];
         if (!userPmHistory) allPms[data.to] = [];
         allPms[data.to].push(data);
       }
 
-      if (data.from !== this.state.me.id) {
+      if (data.from !== this.state.me.socketId) {
         if (
           !this.state.userSelected ||
-          (this.state.userSelected && this.state.userSelected.id !== data.from)
+          (this.state.userSelected &&
+            this.state.userSelected.socketId !== data.from)
         ) {
           const unacknowledgedPms = this.state.unacknowledgedPms;
           unacknowledgedPms.push(data.from);

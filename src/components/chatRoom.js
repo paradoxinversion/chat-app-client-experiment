@@ -94,7 +94,6 @@ class ChatRoom extends React.Component {
     });
 
     socket.on("block-user", ({ blocklist, blockedBy }) => {
-      debugger;
       if (blocklist) {
         this.setState({
           blocklist,

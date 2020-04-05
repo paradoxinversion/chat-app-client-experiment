@@ -11,15 +11,15 @@ const ChatMessageList = ({ messages, blocklist = [], blockedBy = [] }) => (
   <Fragment>
     {messages &&
       messages
-        .filter(message => {
+        .filter((message) => {
           if (
             message.id === "system" ||
-            (!blocklist.map(user => user.userId).includes(message.fromUID) &&
-              !blockedBy.map(user => user.userId).includes(message.fromUID))
+            (!blocklist.includes(message.fromUID) &&
+              !blockedBy.includes(message.fromUID))
           )
             return true;
         })
-        .map(message => (
+        .map((message) => (
           <Message key={`${message.id}-${message.time}`} message={message} />
         ))}
   </Fragment>
@@ -35,10 +35,10 @@ ChatMessageList.propTypes = {
       fromUID: PropTypes.string,
       user: PropTypes.shape({
         username: PropTypes.string.isRequired,
-        avatar: PropTypes.object.isRequired
-      })
+        avatar: PropTypes.object.isRequired,
+      }),
     })
-  )
+  ),
 };
 
 export default ChatMessageList;

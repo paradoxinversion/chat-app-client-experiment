@@ -33,8 +33,10 @@ const ControlPanel = ({
             setFetchError(res.data.error);
           }
         });
+    } else {
+      setBlockedUsers([]);
     }
-  }, []);
+  }, [blocklist]);
   return (
     <div className="flex flex-col h-full">
       <header>
@@ -82,22 +84,22 @@ const ControlPanel = ({
                     className="inline rounded bg-gray-200 p-2 border mt-2 ml-4"
                     onClick={() => {
                       socket.emit("unblock-user", blockedUser.userId);
-                      axios
-                        .get(
-                          `${process.env.REACT_APP_SERVER_URL}chattr/blocked-users`,
-                          {
-                            withCredentials: true,
-                            params: { userIds: blocklist },
-                            headers: { Bearer: store.get("chattr") },
-                          }
-                        )
-                        .then((res) => {
-                          if (res.status === 200) {
-                            setBlockedUsers(res.data.names);
-                          } else {
-                            setFetchError(res.data.error);
-                          }
-                        });
+                      // axios
+                      //   .get(
+                      //     `${process.env.REACT_APP_SERVER_URL}chattr/blocked-users`,
+                      //     {
+                      //       withCredentials: true,
+                      //       params: { userIds: blocklist },
+                      //       headers: { Bearer: store.get("chattr") },
+                      //     }
+                      //   )
+                      //   .then((res) => {
+                      //     if (res.status === 200) {
+                      //       setBlockedUsers(res.data.names);
+                      //     } else {
+                      //       setFetchError(res.data.error);
+                      //     }
+                      //   });
                     }}
                   >
                     Unblock

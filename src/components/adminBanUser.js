@@ -9,7 +9,7 @@ class AdminBanUser extends React.Component {
       selectedUser: "",
       bannedUsers: [],
       initalCheck: false,
-      allUsers: []
+      allUsers: [],
     };
   }
 
@@ -18,7 +18,7 @@ class AdminBanUser extends React.Component {
       `${process.env.REACT_APP_SERVER_URL}chattr/users`,
       {
         withCredentials: true,
-        headers: { Bearer: store.get("chattr") }
+        headers: { Bearer: store.get("chattr") },
       }
     );
 
@@ -27,12 +27,12 @@ class AdminBanUser extends React.Component {
       {
         withCredentials: true,
         headers: { Bearer: store.get("chattr") },
-        params: { accountStatus: 2 }
+        params: { accountStatus: 2 },
       }
     );
     this.setState({
       allUsers: usersRes.data.users,
-      bannedUsers: bannedRes.data.users
+      bannedUsers: bannedRes.data.users,
     });
   }
 
@@ -49,57 +49,61 @@ class AdminBanUser extends React.Component {
           <form id="admin-ban-user-list">
             <select
               className="border rounded appearance-none p-1"
-              onChange={e => {
+              onChange={(e) => {
                 this.setState({ selectedUser: e.target.value });
-              }}>
+              }}
+            >
               <option value="">Select a user</option>
               {this.state.allUsers
-                .filter(user => user._id !== this.props.clientUser.userId)
-                .map(user => (
+                .filter((user) => user._id !== this.props.clientUser.userId)
+                .map((user) => (
                   <option value={user._id}>{user.username}</option>
                 ))}
             </select>
             <button
               className="inline rounded bg-gray-200 p-2 border mt-2 ml-4"
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault();
                 this.props.banUserFn(this.state.selectedUser);
                 this.setState({
                   allUsers: this.state.bannedUsers.filter(
-                    user => user._id !== this.state.selectedUser
-                  )
+                    (user) => user._id !== this.state.selectedUser
+                  ),
                 });
-              }}>
+              }}
+            >
               Ban User
             </button>
           </form>
           <form id="admin-unban-user-list">
             <select
               className="border rounded appearance-none p-1"
-              onChange={e => {
+              onChange={(e) => {
                 this.setState({ selectedUser: e.target.value });
-              }}>
+              }}
+            >
               <option value="">Select a user</option>
               {this.state.bannedUsers
-                .filter(user => user.id !== this.props.clientUser.id)
-                .map(user => (
+                .filter((user) => user.id !== this.props.clientUser.id)
+                .map((user) => (
                   <option value={user._id}>{user.username}</option>
                 ))}
             </select>
             <button
               className="inline rounded bg-gray-200 p-2 border mt-2 ml-4"
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault();
                 this.props.socket.emit("change-user-account-status", {
-                  userIID: this.state.selectedUser,
-                  status: 0
+                  userId: this.state.selectedUser,
+                  status: 0,
                 });
                 this.setState({
                   bannedUsers: this.state.bannedUsers.filter(
-                    user => user._id !== this.state.selectedUser
-                  )
+                    (user) => user._id !== this.state.selectedUser
+                  ),
                 });
-              }}>
+              }}
+            >
               Unban User
             </button>
           </form>

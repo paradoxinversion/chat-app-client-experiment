@@ -18,20 +18,21 @@ const SetUsername = ({ clientUser, socket }) => {
         className="border w-full"
         type="text"
         name="usernameChange"
-        onChange={e => {
+        onChange={(e) => {
           setUsername(e.target.value);
         }}
         value={username}
       />
       <button
         className="block border w-full mt-2"
-        onClick={e => {
+        onClick={(e) => {
           e.preventDefault();
           socket.emit("set-username", {
             username: username,
-            user: clientUser.iid
+            user: clientUser.userId,
           });
-        }}>
+        }}
+      >
         Change Username
       </button>
     </form>

@@ -21,19 +21,20 @@ const SetPhoto = ({ clientUser, socket }) => {
           name="photo-url"
           value={photoURL}
           autoComplete="off"
-          onChange={e => {
+          onChange={(e) => {
             setPhotoURL(e.target.value);
           }}
         />
         <button
           className="btn inline"
-          onClick={async e => {
+          onClick={async (e) => {
             e.preventDefault();
             socket.emit("set-user-photo", {
-              userId: clientUser.iid,
-              photoURL
+              userId: clientUser.userId,
+              photoURL,
             });
-          }}>
+          }}
+        >
           Set
         </button>
       </div>

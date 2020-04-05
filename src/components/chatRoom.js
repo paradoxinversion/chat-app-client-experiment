@@ -72,8 +72,9 @@ class ChatRoom extends React.Component {
       }
     });
 
-    socket.on("user-connected", ({ user }) => {
+    socket.on("user-connected", ({ user, chatHistory }) => {
       this.setState({
+        chatMessages: chatHistory,
         me: user,
         blocklist: user.blockList || [],
         blockedBy: user.blockedBy || [],

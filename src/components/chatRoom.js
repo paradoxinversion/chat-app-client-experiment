@@ -57,6 +57,7 @@ class ChatRoom extends React.Component {
         me
       });
     });
+
     socket.on("chat-message-broadcast", message => {
       const messages = this.state.chatMessages;
       if (
@@ -91,7 +92,9 @@ class ChatRoom extends React.Component {
         // users: data.users
       });
     });
+
     socket.on("block-user", ({ blocklist, blockedBy }) => {
+      debugger;
       if (blocklist) {
         this.setState({
           blocklist
@@ -105,6 +108,7 @@ class ChatRoom extends React.Component {
     });
 
     socket.on("unblock-user", ({ blocklist, blockedBy }) => {
+      debugger;
       if (blocklist) {
         this.setState({
           blocklist
@@ -119,9 +123,11 @@ class ChatRoom extends React.Component {
     });
 
     socket.on("room-user-change", data => {
+      const blockedByIds = this.state.blockedBy.map(user => user.userId);
+      const blockedIds = this.state.blocklist.map(user => user.userId);
       if (
-        !this.state.blockedBy.includes(data.user.userId) &&
-        !this.state.blocklist.includes(data.user.userId)
+        !blockedByIds.includes(data.user.userId) &&
+        !blockedIds.includes(data.user.userId)
       ) {
         const messages = this.state.chatMessages.slice();
         messages.push({
@@ -302,13 +308,15 @@ class ChatRoom extends React.Component {
   }
 
   /***
-   * Add a specified user to the current user's blocklist.
+   * Add a specified user to the client's blocklist.
    */
   blockUser(userToBlock) {
-    const blocklist = this.state.blocklist.slice();
-    blocklist.push(userToBlock.socketId);
-    this.setState({ blocklist });
-    this.state.socket.emit("block-user", userToBlock.socketId);
+    this.state.socket.emit("block-user", {
+      userId: userToBlock.userId
+    });
+    // const blocklist = this.state.blocklist.slice();
+    // blocklist.push(userToBlock.socketId);
+    // this.setState({ blocklist });
   }
 
   banUser(userId) {
@@ -359,6 +367,7 @@ class ChatRoom extends React.Component {
                   <React.Fragment>
                     <ChatMessageList
                       blocklist={this.state.blocklist}
+                      blockedBy={this.state.blockedBy}
                       messages={chatMessages}
                     />
                     <div id="chat-bottom" />
@@ -374,8 +383,12 @@ class ChatRoom extends React.Component {
               {users
                 .filter(
                   user =>
-                    !this.state.blockedBy.includes(user.iid) &&
-                    !this.state.blocklist.includes(user.iid)
+                    !this.state.blockedBy
+                      .map(user => user.userId)
+                      .includes(user.iid) &&
+                    !this.state.blocklist
+                      .map(user => user.userId)
+                      .includes(user.iid)
                 )
                 .map(user => {
                   return (

@@ -7,11 +7,18 @@ import PropTypes from "prop-types";
  * messages in a chat, whether it's public or private.
  * @param {*} param0
  */
-const ChatMessageList = ({ messages, blocklist = [] }) => (
+const ChatMessageList = ({ messages, blocklist = [], blockedBy = [] }) => (
   <Fragment>
     {messages &&
       messages
-        .filter(message => !blocklist.includes(message.fromUID))
+        .filter(message => {
+          if (
+            message.id === "system" ||
+            (!blocklist.map(user => user.userId).includes(message.fromUID) &&
+              !blockedBy.map(user => user.userId).includes(message.fromUID))
+          )
+            return true;
+        })
         .map(message => (
           <Message key={`${message.id}-${message.time}`} message={message} />
         ))}

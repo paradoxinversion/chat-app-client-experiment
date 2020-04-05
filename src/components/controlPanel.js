@@ -50,25 +50,19 @@ const ControlPanel = ({
           <p className="mb-4">Blocked Users</p>
           <p>Here you can manage your block list.</p>
           {blocklist.length > 0 ? (
-            blocklist.map(blockedUserId => {
-              const blockedUser = users.find(
-                user => user.iid === blockedUserId
+            blocklist.map(blockedUser => {
+              return (
+                <div>
+                  <span>{blockedUser.username}</span>{" "}
+                  <button
+                    className="inline rounded bg-gray-200 p-2 border mt-2 ml-4"
+                    onClick={() => {
+                      socket.emit("unblock-user", blockedUser.userId);
+                    }}>
+                    Unblock
+                  </button>
+                </div>
               );
-              if (blockedUser) {
-                return (
-                  <div>
-                    <span>{blockedUser.username}</span>{" "}
-                    <button
-                      className="inline rounded bg-gray-200 p-2 border mt-2 ml-4"
-                      onClick={() => {
-                        socket.emit("unblock-user", blockedUser.id);
-                      }}>
-                      Unblock
-                    </button>
-                  </div>
-                );
-              }
-              return null;
             })
           ) : (
             <p>You haven't blocked any users.</p>

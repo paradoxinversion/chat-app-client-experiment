@@ -26,7 +26,7 @@ class ChatRoom extends React.Component {
       usernameChange: "",
       blocklist: [],
       blockedBy: [],
-      me: null
+      me: null,
     };
     this.chatTextAreaRef = React.createRef();
     this.chatInputForm = React.createRef();
@@ -46,19 +46,19 @@ class ChatRoom extends React.Component {
     const socket = io(socketUrl, {
       transports: ["websocket"],
       query: {
-        token: store.get("chattr")
-      }
+        token: store.get("chattr"),
+      },
     });
     this.setState({ socket });
-    socket.on("set-username", username => {
+    socket.on("set-username", (username) => {
       const me = this.state.me;
       me.username = username.username;
       this.setState({
-        me
+        me,
       });
     });
 
-    socket.on("chat-message-broadcast", message => {
+    socket.on("chat-message-broadcast", (message) => {
       const messages = this.state.chatMessages;
       if (
         !this.state.blocklist.includes(message.fromUID) &&
@@ -66,7 +66,7 @@ class ChatRoom extends React.Component {
       ) {
         messages.push(message);
         this.setState({
-          chatMessages: messages
+          chatMessages: messages,
         });
         if (this.state.scrollToNewMessages) this.scrollToChatBottom();
       }
@@ -76,7 +76,7 @@ class ChatRoom extends React.Component {
       this.setState({
         me: user,
         blocklist: user.blockList || [],
-        blockedBy: user.blockedBy || []
+        blockedBy: user.blockedBy || [],
       });
     });
 
@@ -85,10 +85,10 @@ class ChatRoom extends React.Component {
       messages.push({
         id: "system",
         time: Date.now(),
-        message: `${bannedUser} has been banned from chat.`
+        message: `${bannedUser} has been banned from chat.`,
       });
       this.setState({
-        chatMessages: messages
+        chatMessages: messages,
         // users: data.users
       });
     });
@@ -97,34 +97,33 @@ class ChatRoom extends React.Component {
       debugger;
       if (blocklist) {
         this.setState({
-          blocklist
+          blocklist,
         });
       }
       if (blockedBy) {
         this.setState({
-          blockedBy
+          blockedBy,
         });
       }
     });
 
     socket.on("unblock-user", ({ blocklist, blockedBy }) => {
-      debugger;
       if (blocklist) {
         this.setState({
-          blocklist
+          blocklist,
         });
       }
 
       if (blockedBy) {
         this.setState({
-          blockedBy
+          blockedBy,
         });
       }
     });
 
-    socket.on("room-user-change", data => {
-      const blockedByIds = this.state.blockedBy.map(user => user.userId);
-      const blockedIds = this.state.blocklist.map(user => user.userId);
+    socket.on("room-user-change", (data) => {
+      const blockedByIds = this.state.blockedBy.map((user) => user.userId);
+      const blockedIds = this.state.blocklist.map((user) => user.userId);
       if (
         !blockedByIds.includes(data.user.userId) &&
         !blockedIds.includes(data.user.userId)
@@ -133,27 +132,27 @@ class ChatRoom extends React.Component {
         messages.push({
           id: "system",
           time: Date.now(),
-          message: data.message
+          message: data.message,
         });
         this.setState({
           chatMessages: messages,
-          users: data.users
+          users: data.users,
         });
       }
     });
 
     socket.on("room-user-update", ({ users }) => {
-      const me = users.find(user => {
+      const me = users.find((user) => {
         return user.userId === this.state.me.userId;
       });
 
       this.setState({
         users,
-        me
+        me,
       });
     });
 
-    socket.on("pm", data => {
+    socket.on("pm", (data) => {
       // get the pm history w/ that user key
       // copy it, add as with normal messages
       // the to for sender, and from for reciever
@@ -181,12 +180,12 @@ class ChatRoom extends React.Component {
           const unacknowledgedPms = this.state.unacknowledgedPms;
           unacknowledgedPms.push(data.from);
           this.setState({
-            unacknowledgedPms
+            unacknowledgedPms,
           });
         }
       }
       this.setState({
-        privateChatMessages: allPms
+        privateChatMessages: allPms,
       });
       if (this.state.scrollToNewMessages) this.scrollToPMBottom();
     });
@@ -194,7 +193,7 @@ class ChatRoom extends React.Component {
 
   handleInput(e) {
     this.setState({
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   }
 
@@ -206,10 +205,10 @@ class ChatRoom extends React.Component {
     if (user.socketId !== this.state.me.socketId) {
       this.openPrivateChat(user);
       const unacknowledgedPms = this.state.unacknowledgedPms.filter(
-        unacknowledgedUser => user.socketId !== unacknowledgedUser
+        (unacknowledgedUser) => user.socketId !== unacknowledgedUser
       );
       this.setState({
-        unacknowledgedPms
+        unacknowledgedPms,
       });
     } else {
       if (this.state.privateChannel) {
@@ -288,7 +287,7 @@ class ChatRoom extends React.Component {
           message: chatInput,
           from: this.state.me.socketId,
           fromUID: this.state.me.userId,
-          isServerMessage
+          isServerMessage,
         });
       } else {
         // evt, msg, user
@@ -297,11 +296,11 @@ class ChatRoom extends React.Component {
           to: user.socketId,
           toUID: user.userId,
           from: this.state.me.socketId,
-          fromUID: this.state.me.userId
+          fromUID: this.state.me.userId,
         });
       }
       this.setState({
-        chatInput: ""
+        chatInput: "",
       });
       e.target.value = "";
     }
@@ -312,7 +311,7 @@ class ChatRoom extends React.Component {
    */
   blockUser(userToBlock) {
     this.state.socket.emit("block-user", {
-      userId: userToBlock.userId
+      userId: userToBlock.userId,
     });
     // const blocklist = this.state.blocklist.slice();
     // blocklist.push(userToBlock.socketId);
@@ -322,7 +321,7 @@ class ChatRoom extends React.Component {
   banUser(userId) {
     if (this.state.me.role === process.env.REACT_APP_ADMIN_USER_ROLE) {
       const userClientToBan = this.state.users.find(
-        user => user.userId === userId
+        (user) => user.userId === userId
       );
       this.state.socket.emit("ban-user", userClientToBan.socketId);
     }
@@ -333,11 +332,13 @@ class ChatRoom extends React.Component {
       <React.Fragment>
         <div
           id="chat-room"
-          className="border flex flex-col flex-grow overflow-y-hidden sm:flex-row">
+          className="border flex flex-col flex-grow overflow-y-hidden sm:flex-row"
+        >
           <div
             onScroll={this.setChatScrollState}
             id="chat-area"
-            className="flex-grow sm:w-3/4 p-4 overflow-y-scroll">
+            className="flex-grow sm:w-3/4 p-4 overflow-y-scroll"
+          >
             {this.state.showUserCP ? (
               <ControlPanel
                 blocklist={this.state.blocklist}
@@ -378,19 +379,16 @@ class ChatRoom extends React.Component {
           </div>
           <div
             id="user-area"
-            className="whitespace-no-wrap h-20 sm:border-l sm:h-auto sm:w-1/4 ">
+            className="whitespace-no-wrap h-20 sm:border-l sm:h-auto sm:w-1/4 "
+          >
             <div className="overflow-x-scroll sm:overflow-x-visible sm:h-full sm:flex sm:flex-col sm:overflow-y-scroll">
               {users
                 .filter(
-                  user =>
-                    !this.state.blockedBy
-                      .map(user => user.userId)
-                      .includes(user.iid) &&
-                    !this.state.blocklist
-                      .map(user => user.userId)
-                      .includes(user.iid)
+                  (user) =>
+                    !this.state.blockedBy.includes(user.userId) &&
+                    !this.state.blocklist.includes(user.userId)
                 )
-                .map(user => {
+                .map((user) => {
                   return (
                     <User
                       key={user.id}
@@ -414,19 +412,20 @@ class ChatRoom extends React.Component {
           <div id="input-area" className="flex">
             <form
               ref={this.chatInputForm}
-              className="flex flex-grow border m-2">
+              className="flex flex-grow border m-2"
+            >
               <textarea
                 id="chatInput"
                 name="chatInput"
                 className="flex-grow resize-none border m-2 rounded"
                 value={chatInput}
                 onChange={this.handleInput}
-                onKeyDown={e => {
+                onKeyDown={(e) => {
                   if (e.keyCode === 13 && !e.shiftKey) {
                     this.sendMessage(e, socket, chatInput, userSelected);
                   }
                 }}
-                onKeyUp={e => {
+                onKeyUp={(e) => {
                   if (e.keyCode === 13 && !e.shiftKey) {
                     e.target.value = "";
                   }
@@ -434,10 +433,11 @@ class ChatRoom extends React.Component {
               />
               <button
                 className="rounded border p-2 m-2"
-                onClick={e => {
+                onClick={(e) => {
                   e.preventDefault();
                   this.sendMessage(e, socket, chatInput, userSelected, false);
-                }}>
+                }}
+              >
                 Send
               </button>
               {this.state.me &&
@@ -445,7 +445,7 @@ class ChatRoom extends React.Component {
                   process.env.REACT_APP_ADMIN_USER_ROLE && (
                   <button
                     className="rounded border p-2 m-2"
-                    onClick={e => {
+                    onClick={(e) => {
                       e.preventDefault();
                       this.sendMessage(
                         e,
@@ -454,7 +454,8 @@ class ChatRoom extends React.Component {
                         userSelected,
                         true
                       );
-                    }}>
+                    }}
+                  >
                     SERVER MESSAGE
                   </button>
                 )}

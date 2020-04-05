@@ -6,7 +6,7 @@ import "./styles/tailwind.css";
 
 export default function App(props) {
   const [appState, setAppState] = useState({
-    loggedIn: false
+    loggedIn: false,
   });
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -49,13 +49,14 @@ export default function App(props) {
                     `${process.env.REACT_APP_SERVER_URL}chattr/logout`,
                     {
                       withCredentials: true,
-                      headers: { Bearer: store.get("chattr") }
+                      headers: { Bearer: store.get("chattr") },
                     }
                   );
                   store.remove("chattr");
                   document.location.reload();
                 }
-              }}>
+              }}
+            >
               Log Out
             </button>
           )}
@@ -87,7 +88,7 @@ export default function App(props) {
                     id="username"
                     type="text"
                     value={username}
-                    onChange={e => setUsername(e.target.value)}
+                    onChange={(e) => setUsername(e.target.value)}
                   />
                   <label htmlFor="password">Password</label>
                   <input
@@ -96,11 +97,11 @@ export default function App(props) {
                     id="password"
                     type="password"
                     value={password}
-                    onChange={e => setPassword(e.target.value)}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                   <button
                     className="border rounded bg-gray-200 mt-4 mb-4"
-                    onClick={async e => {
+                    onClick={async (e) => {
                       e.preventDefault();
                       const serverURL = process.env.REACT_APP_SERVER_URL;
                       try {
@@ -108,7 +109,7 @@ export default function App(props) {
                           `${serverURL}chattr/sign-in`,
                           {
                             username,
-                            password
+                            password,
                           },
                           { withCredentials: true }
                         );
@@ -121,7 +122,8 @@ export default function App(props) {
                       } catch (e) {
                         throw e;
                       }
-                    }}>
+                    }}
+                  >
                     Log In
                   </button>
                   {signinError && <p className="text-red-700">{signinError}</p>}
@@ -133,7 +135,7 @@ export default function App(props) {
                     type="password"
                     name="password-repeat"
                     value={passwordRepeat}
-                    onChange={e => {
+                    onChange={(e) => {
                       setPasswordRepeat(e.target.value);
                     }}
                     onBlur={() => {
@@ -149,7 +151,7 @@ export default function App(props) {
                   )}
                   <button
                     className="btn mt-4"
-                    onClick={async e => {
+                    onClick={async (e) => {
                       e.preventDefault();
                       if (!passwordMismatch) {
                         const serverURL = process.env.REACT_APP_SERVER_URL;
@@ -158,7 +160,7 @@ export default function App(props) {
                           `${serverURL}chattr/sign-up`,
                           {
                             username,
-                            password
+                            password,
                           },
                           { withCredentials: true }
                         );
@@ -168,7 +170,8 @@ export default function App(props) {
                           setSignupError(signupResult.data.error);
                         }
                       }
-                    }}>
+                    }}
+                  >
                     Sign Up
                   </button>
                   {signupError && <p className="text-red-700">{signupError}</p>}

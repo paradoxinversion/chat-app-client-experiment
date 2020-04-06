@@ -8,6 +8,8 @@ Install dependencies via `npm` or `yarn`.
 
 ## Environment
 
+Copy .env.example and change values as necessary. This version uses .env for local development and now.json for env vars on production in Zeit.
+
 ### Scripts
 
 #### start

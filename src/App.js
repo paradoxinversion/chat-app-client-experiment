@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import ChatRoom from "./components/chatRoom";
 import axios from "axios";
 import store from "store";
+import { Helmet } from "react-helmet";
+
 import "./styles/tailwind.css";
 
 export default function App(props) {
@@ -36,6 +38,11 @@ export default function App(props) {
 
   return (
     <div className="App h-screen">
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>Chattr</title>
+        <link rel="canonical" href="http://mysite.com/example" />
+      </Helmet>
       <div id="chat-container" className="max-h-screen h-full flex flex-col">
         <div className="flex justify-between items-center p-4">
           <p className=" font-bold text-xl">chattr</p>
@@ -55,8 +62,7 @@ export default function App(props) {
                   store.remove("chattr");
                   document.location.reload();
                 }
-              }}
-            >
+              }}>
               Log Out
             </button>
           )}
@@ -75,6 +81,10 @@ export default function App(props) {
               </p>
             ) : (
               <div className="m-4">
+                <Helmet>
+                  <title>Chattr: Login or Sign Up</title>
+                  <meta name="description" content="Helmet application" />
+                </Helmet>
                 <p className="max-w-lg text-center ml-auto mr-auto">
                   Welcome to the chat room. You'll need to sign up and sign in
                   to get in in the conversation. <br />
@@ -122,8 +132,7 @@ export default function App(props) {
                       } catch (e) {
                         throw e;
                       }
-                    }}
-                  >
+                    }}>
                     Log In
                   </button>
                   {signinError && <p className="text-red-700">{signinError}</p>}
@@ -170,8 +179,7 @@ export default function App(props) {
                           setSignupError(signupResult.data.error);
                         }
                       }
-                    }}
-                  >
+                    }}>
                     Sign Up
                   </button>
                   {signupError && <p className="text-red-700">{signupError}</p>}

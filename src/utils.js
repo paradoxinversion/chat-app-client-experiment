@@ -4,7 +4,7 @@ export const generateUser = () => {
   return {
     id: Faker.random.uuid(),
     username: Faker.internet.userName(),
-    avatar: Faker.internet.avatar()
+    avatar: Faker.internet.avatar(),
   };
 };
 
@@ -24,7 +24,7 @@ export const generateAppData = (totalUsers = 20, totalMessages = 150) => {
       id: Faker.random.uuid(),
       user: user,
       message: Faker.lorem.sentences(Math.floor(Math.random() * 5) || 1),
-      time: new Date(currentTime)
+      time: new Date(currentTime),
     };
     currentTime += Math.floor(Math.random() * 60000);
     messages.push(message);
@@ -32,7 +32,7 @@ export const generateAppData = (totalUsers = 20, totalMessages = 150) => {
   return { messages, users };
 };
 
-export const renderPNGFromArrayBuffer = arrayBuffer => {
+export const renderPNGFromArrayBuffer = (arrayBuffer) => {
   const avatarBlob = new Blob([arrayBuffer]);
   const urlCreator = window.URL || window.webkitURL;
   return urlCreator.createObjectURL(avatarBlob);

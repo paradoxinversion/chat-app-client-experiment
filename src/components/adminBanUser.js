@@ -38,7 +38,6 @@ class AdminBanUser extends React.Component {
 
   componentWillUnmount() {
     this.props.socket.off("get-banned-users");
-    console.log("socket off?");
   }
   render() {
     return (
@@ -51,8 +50,7 @@ class AdminBanUser extends React.Component {
               className="border rounded appearance-none p-1"
               onChange={(e) => {
                 this.setState({ selectedUser: e.target.value });
-              }}
-            >
+              }}>
               <option value="">Select a user</option>
               {this.state.allUsers
                 .filter((user) => user._id !== this.props.clientUser.userId)
@@ -70,8 +68,7 @@ class AdminBanUser extends React.Component {
                     (user) => user._id !== this.state.selectedUser
                   ),
                 });
-              }}
-            >
+              }}>
               Ban User
             </button>
           </form>
@@ -80,8 +77,7 @@ class AdminBanUser extends React.Component {
               className="border rounded appearance-none p-1"
               onChange={(e) => {
                 this.setState({ selectedUser: e.target.value });
-              }}
-            >
+              }}>
               <option value="">Select a user</option>
               {this.state.bannedUsers
                 .filter((user) => user.id !== this.props.clientUser.id)
@@ -95,15 +91,14 @@ class AdminBanUser extends React.Component {
                 e.preventDefault();
                 this.props.socket.emit("change-user-account-status", {
                   userId: this.state.selectedUser,
-                  status: 0,
+                  status: "0",
                 });
                 this.setState({
                   bannedUsers: this.state.bannedUsers.filter(
                     (user) => user._id !== this.state.selectedUser
                   ),
                 });
-              }}
-            >
+              }}>
               Unban User
             </button>
           </form>

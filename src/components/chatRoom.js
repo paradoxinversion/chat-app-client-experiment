@@ -5,6 +5,22 @@ import io from "socket.io-client";
 import PrivateChat from "./privateChat";
 import ControlPanel from "./controlPanel";
 import store from "store";
+import { Helmet } from "react-helmet";
+
+let hidden = null;
+let visibilityChange = null;
+if (typeof document.hidden !== "undefined") {
+  // Opera 12.10 and Firefox 18 and later support
+  hidden = "hidden";
+  visibilityChange = "visibilitychange";
+} else if (typeof document.msHidden !== "undefined") {
+  hidden = "msHidden";
+  visibilityChange = "msvisibilitychange";
+} else if (typeof document.webkitHidden !== "undefined") {
+  hidden = "webkitHidden";
+  visibilityChange = "webkitvisibilitychange";
+}
+
 /**
  * At ChatRoom represents a space where many users
  * take part in a discussion.
@@ -22,6 +38,8 @@ class ChatRoom extends React.Component {
       privateChannel: "",
       scrollToNewMessages: true,
       unacknowledgedPms: [],
+      unacknowledgedChatActivity: false,
+      chatHidden: false,
       showUserCP: false,
       usernameChange: "",
       blocklist: [],
@@ -49,7 +67,14 @@ class ChatRoom extends React.Component {
         token: store.get("chattr"),
       },
     });
+
     this.setState({ socket });
+
+    document.addEventListener(
+      visibilityChange,
+      this.handleVisibilityChange,
+      false
+    );
     socket.on("set-username", (username) => {
       const me = this.state.me;
       me.username = username.username;
@@ -68,7 +93,16 @@ class ChatRoom extends React.Component {
         this.setState({
           chatMessages: messages,
         });
-        if (this.state.scrollToNewMessages) this.scrollToChatBottom();
+        if (this.state.scrollToNewMessages && !this.state.chatHidden) {
+          this.scrollToChatBottom();
+          this.setState({ unacknowledgedChatActivity: false });
+        } else {
+          this.setState({ unacknowledgedChatActivity: true });
+        }
+        if (this.state.chatHidden) {
+          console.log("its hidden");
+          this.setState({ unacknowledgedChatActivity: true });
+        }
       }
     });
 
@@ -191,6 +225,20 @@ class ChatRoom extends React.Component {
     });
   }
 
+  componentWillUnmount() {
+    document.removeEventListener(visibilityChange, this.handleVisibilityChange);
+  }
+
+  handleVisibilityChange = () => {
+    if (document[hidden]) {
+      console.log("hidden");
+      this.setState({ chatHidden: false });
+    } else {
+      console.log("shownn");
+      this.setState({ chatHidden: true });
+    }
+  };
+
   handleInput(e) {
     this.setState({
       [e.target.name]: e.target.value,
@@ -269,6 +317,7 @@ class ChatRoom extends React.Component {
     const chatScrolledToEnd =
       e.target.scrollTop + e.target.clientHeight === e.target.scrollHeight;
     if (chatScrolledToEnd) {
+      this.setState({ unacknowledgedChatActivity: false });
       this.setState({ scrollToNewMessages: true });
     } else {
       this.setState({ scrollToNewMessages: false });
@@ -330,15 +379,19 @@ class ChatRoom extends React.Component {
     const { socket, chatMessages, users, chatInput, userSelected } = this.state;
     return (
       <React.Fragment>
+        {this.state.unacknowledgedChatActivity && (
+          <Helmet>
+            <meta charSet="utf-8" />
+            <title>New Message</title>
+          </Helmet>
+        )}
         <div
           id="chat-room"
-          className="border flex flex-col flex-grow overflow-y-hidden sm:flex-row"
-        >
+          className="border flex flex-col flex-grow overflow-y-hidden sm:flex-row">
           <div
             onScroll={this.setChatScrollState}
             id="chat-area"
-            className="flex-grow sm:w-3/4 p-4 overflow-y-scroll"
-          >
+            className="flex-grow sm:w-3/4 p-4 overflow-y-scroll">
             {this.state.showUserCP ? (
               <ControlPanel
                 blocklist={this.state.blocklist}
@@ -379,8 +432,7 @@ class ChatRoom extends React.Component {
           </div>
           <div
             id="user-area"
-            className="whitespace-no-wrap h-20 sm:border-l sm:h-auto sm:w-1/4 "
-          >
+            className="whitespace-no-wrap h-20 sm:border-l sm:h-auto sm:w-1/4 ">
             <div className="overflow-x-scroll sm:overflow-x-visible sm:h-full sm:flex sm:flex-col sm:overflow-y-scroll">
               {users
                 .filter(
@@ -412,8 +464,7 @@ class ChatRoom extends React.Component {
           <div id="input-area" className="flex">
             <form
               ref={this.chatInputForm}
-              className="flex flex-grow border m-2"
-            >
+              className="flex flex-grow border m-2">
               <textarea
                 id="chatInput"
                 name="chatInput"
@@ -436,8 +487,7 @@ class ChatRoom extends React.Component {
                 onClick={(e) => {
                   e.preventDefault();
                   this.sendMessage(e, socket, chatInput, userSelected, false);
-                }}
-              >
+                }}>
                 Send
               </button>
               {this.state.me &&
@@ -454,8 +504,7 @@ class ChatRoom extends React.Component {
                         userSelected,
                         true
                       );
-                    }}
-                  >
+                    }}>
                     SERVER MESSAGE
                   </button>
                 )}
